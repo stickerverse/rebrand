@@ -13,8 +13,9 @@
         margin: 0;
         padding: 0;
         width: 100vw;
-        height: 100vh;
-        overflow: hidden;
+        min-height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
       }
       #svg-bg {
         position: fixed;
@@ -2308,10 +2309,6 @@
                       inset 0 1px 0 rgba(255, 255, 255, 0.1);
                     backdrop-filter: blur(12px);
                   "
-                  href="login"
-                  >Log in</a
-                ><a
-                  class="primaryButton px-4 py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 inline-block"
                   href="signup"
                   >Signup</a
                 >
@@ -2551,19 +2548,6 @@
                   href="background-removal"
                   ><span class="jsx-36d2212abb96ee5d text-lg mr-3">🪄</span
                   >Background Removal</a
-                ><a
-                  class="w-full text-left px-4 py-3 rounded-lg text-white hover:bg-white hover:bg-opacity-90 hover:text-gray-800 transition-all duration-200 flex items-center"
-                  href="login"
-                  ><svg
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                    class="jsx-36d2212abb96ee5d w-5 h-5 mr-3"
-                  >
-                    <path
-                      d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
-                      class="jsx-36d2212abb96ee5d"
-                    ></path></svg
-                  >Log in</a
                 ><a
                   class="w-full text-left px-4 py-3 rounded-lg text-white hover:bg-white hover:bg-opacity-90 hover:text-gray-800 transition-all duration-200 flex items-center"
                   href="signup"
@@ -3900,10 +3884,6 @@
                 class="jsx-c7c892e1b4771724 md:hidden overflow-x-auto pb-4 relative"
               >
                 <div
-                  class="jsx-c7c892e1b4771724 absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#030140] to-transparent pointer-events-none z-10"
-                ></div>
-                <div
-                  style="scrollbar-width: none; -ms-overflow-style: none"
                   class="jsx-c7c892e1b4771724 flex space-x-4 w-max"
                 >
                   <div
