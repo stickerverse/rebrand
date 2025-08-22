@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Sticker Shuttle</title>
+		<link rel="stylesheet" href="https://use.typekit.net/eqx3jwb.css">
+		<link rel="stylesheet" type="text/css" href="base.98fd6c19.css">
+		<style>
+			/* Interactive Background Styles */
+			body {
+				overflow: hidden;
+				background-color: #000000;
+				margin: 0;
+				padding: 0;
+			}
+			
+			/* Make grid items draggable */
+			.grid__item {
+				position: absolute !important;
+				cursor: grab !important;
+				user-select: none !important;
+				-webkit-user-select: none !important;
+				touch-action: none !important;
+				z-index: 1 !important;
+				width: 150px !important;
+				height: 150px !important;
+			}
+			
+			/* Ensure images display properly */
+			.grid__item-img {
+				background-size: contain !important;
+				background-repeat: no-repeat !important;
+				background-position: center !important;
+				width: 100% !important;
+				height: 100% !important;
+				pointer-events: none !important;
+			}
+			
+			/* Center grid and content */
+			.grid {
+				position: fixed !important;
+				pointer-events: none !important;
+				width: 100vw !important;
+				height: 100vh !important;
+				top: 40% !important;
+				left: 50% !important;
+				transform: translate(-50%, -50%) !important;
+				display: flex !important;
+				align-items: center !important;
+				justify-content: center !important;
+				z-index: 0 !important;
+			}
+			
+			/* Interactive Background Container */
+			.interactive-background {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				z-index: 0;
+				pointer-events: none;
+			}
+			
+			/* Main Content Container */
+			.main-content {
+				position: relative;
+				z-index: 2;
+				width: 100%;
+				min-height: 100vh;
+			}
+			
+			/* Stars Background */
+			.stars-bg {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: 0;
+				pointer-events: none;
+			}
+			
+			/* Add dragging class */
+			.dragging {
+				cursor: grabbing !important;
+				z-index: 1000 !important;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Interactive Background -->
+		<div class="interactive-background">
+			<!-- Shooting Stars Background Canvas -->
+			<canvas class="stars-bg"></canvas>
+			
+			<!-- Interactive Stickers -->
+			<div class="grid">
+				<div class="grid__item pos-1"><div class="grid__item-img" style="background-image:url(dist/dino.png);"></div></div>
+				<div class="grid__item pos-2"><div class="grid__item-img" style="background-image:url(dist/dietcoke.png);"></div></div>
+				<div class="grid__item pos-3"><div class="grid__item-img" style="background-image:url(dist/kittyabduction.png);"></div></div>
+				<div class="grid__item pos-4"><div class="grid__item-img" style="background-image:url(dist/lego.png);"></div></div>
+				<div class="grid__item pos-5"><div class="grid__item-img" style="background-image:url(dist/lilweezy.png);"></div></div>
+				<div class="grid__item pos-6"><div class="grid__item-img" style="background-image:url(dist/mandoyoda.png);"></div></div>
+				<div class="grid__item pos-7"><div class="grid__item-img" style="background-image:url(dist/marioturtle.png);"></div></div>
+				<div class="grid__item pos-8"><div class="grid__item-img" style="background-image:url(dist/monkeycig.png);"></div></div>
+				<div class="grid__item pos-9"><div class="grid__item-img" style="background-image:url(dist/picklerick.png);"></div></div>
+				<div class="grid__item pos-10"><div class="grid__item-img" style="background-image:url(dist/holoship.png);"></div></div>
+				<div class="grid__item pos-11"><div class="grid__item-img" style="background-image:url(dist/alienspacemanrocket.png);"></div></div>
+				<div class="grid__item pos-12"><div class="grid__item-img" style="background-image:url(dist/arcade.png);"></div></div>
+				<div class="grid__item pos-13"><div class="grid__item-img" style="background-image:url(dist/chaosracoon.png);"></div></div>
+				<div class="grid__item pos-14"><div class="grid__item-img" style="background-image:url(dist/doyoulikemystickerskitty.png);"></div></div>
+				<div class="grid__item pos-15"><div class="grid__item-img" style="background-image:url(dist/eyegalxy.png);"></div></div>
+				<div class="grid__item pos-16"><div class="grid__item-img" style="background-image:url(dist/gameboy.png);"></div></div>
+				<div class="grid__item pos-17"><div class="grid__item-img" style="background-image:url(dist/grosseye.png);"></div></div>
+				<div class="grid__item pos-18"><div class="grid__item-img" style="background-image:url(dist/kittycracker.png);"></div></div>
+				<div class="grid__item pos-19"><div class="grid__item-img" style="background-image:url(dist/nointernet.png);"></div></div>
+				<div class="grid__item pos-20"><div class="grid__item-img" style="background-image:url(dist/threeeyedkitty.png);"></div></div>
+			</div>
+		</div>
+
+		<!-- Main Content -->
+		<div class="main-content">
+			<!-- Original index.html content goes here -->
+			[MAIN_CONTENT]
+		</div>
+
+		<!-- Scripts -->
+		<script src="dist/demo2.44794d1a.js"></script>
+		<script>
+			// Remove loading class immediately
+			document.body.classList.remove('loading');
+			
+			// Initialize direct DOM manipulation for dragging
+			document.addEventListener('DOMContentLoaded', function() {
+				console.log('DOM loaded - setting up drag functionality');
+				setupDragging();
+			});
+			
+			// Also set up on window load to ensure everything is ready
+			window.addEventListener('load', function() {
+				console.log('Window loaded - ensuring drag is set up');
+				document.body.classList.remove('loading');
+				setupDragging();
+				
+				// Position items randomly
+				randomizePositions();
+			});
+			
+			// Function to set up dragging
+			function setupDragging() {
+				console.log('Setting up dragging for all grid items');
+				const gridItems = document.querySelectorAll('.grid__item');
+				console.log('Found', gridItems.length, 'grid items');
+				
+				gridItems.forEach((item, index) => {
+					console.log('Setting up item', index);
+					
+					// Store position directly on the element
+					if (!item.dataset.x) item.dataset.x = '0';
+					if (!item.dataset.y) item.dataset.y = '0';
+					
+					// Apply initial position
+					updateItemPosition(item);
+					
+					// Add event listeners
+					item.addEventListener('mousedown', handleMouseDown);
+					item.addEventListener('touchstart', handleTouchStart, {passive: false});
+				});
+			}
+			
+			// Position items randomly across the screen in a centered pattern
+			function randomizePositions() {
+				const gridItems = document.querySelectorAll('.grid__item');
+				const padding = 100;
+				
+				// Calculate center area (moved up)
+				const centerX = window.innerWidth / 2;
+				const centerY = window.innerHeight * 0.4;
+				const spreadX = window.innerWidth * 0.35;
+				const spreadY = window.innerHeight * 0.3;
+				
+				gridItems.forEach(item => {
+					const angle = Math.random() * Math.PI * 2;
+					const distance = Math.random() * Math.min(spreadX, spreadY);
+					
+					const x = centerX + Math.cos(angle) * distance;
+					const y = centerY + Math.sin(angle) * distance;
+					
+					const boundedX = Math.max(padding, Math.min(window.innerWidth - padding, x));
+					const boundedY = Math.max(padding, Math.min(window.innerHeight - padding, y));
+					
+					item.dataset.x = boundedX;
+					item.dataset.y = boundedY;
+					
+					updateItemPosition(item);
+				});
+			}
+			
+			// Update item position based on stored coordinates
+			function updateItemPosition(item) {
+				const x = parseFloat(item.dataset.x) || 0;
+				const y = parseFloat(item.dataset.y) || 0;
+				item.style.left = x + 'px';
+				item.style.top = y + 'px';
+			}
+			
+			// Mouse down handler
+			function handleMouseDown(e) {
+				e.preventDefault();
+				const item = e.currentTarget;
+				item.classList.add('dragging');
+				
+				const rect = item.getBoundingClientRect();
+				const offsetX = e.clientX - rect.left;
+				const offsetY = e.clientY - rect.top;
+				
+				item.dataset.offsetX = offsetX;
+				item.dataset.offsetY = offsetY;
+				
+				document.addEventListener('mousemove', handleMouseMove);
+				document.addEventListener('mouseup', handleMouseUp);
+			}
+			
+			// Touch start handler
+			function handleTouchStart(e) {
+				e.preventDefault();
+				const item = e.currentTarget;
+				item.classList.add('dragging');
+				
+				const touch = e.touches[0];
+				const rect = item.getBoundingClientRect();
+				const offsetX = touch.clientX - rect.left;
+				const offsetY = touch.clientY - rect.top;
+				
+				item.dataset.offsetX = offsetX;
+				item.dataset.offsetY = offsetY;
+				
+				document.addEventListener('touchmove', handleTouchMove, {passive: false});
+				document.addEventListener('touchend', handleTouchEnd);
+			}
+			
+			// Mouse move handler
+			function handleMouseMove(e) {
+				const item = document.querySelector('.dragging');
+				if (!item) return;
+				
+				e.preventDefault();
+				const offsetX = parseFloat(item.dataset.offsetX) || 0;
+				const offsetY = parseFloat(item.dataset.offsetY) || 0;
+				
+				const x = e.clientX - offsetX;
+				const y = e.clientY - offsetY;
+				
+				item.dataset.x = x;
+				item.dataset.y = y;
+				updateItemPosition(item);
+			}
+			
+			// Touch move handler
+			function handleTouchMove(e) {
+				const item = document.querySelector('.dragging');
+				if (!item) return;
+				
+				e.preventDefault();
+				const touch = e.touches[0];
+				const offsetX = parseFloat(item.dataset.offsetX) || 0;
+				const offsetY = parseFloat(item.dataset.offsetY) || 0;
+				
+				const x = touch.clientX - offsetX;
+				const y = touch.clientY - offsetY;
+				
+				item.dataset.x = x;
+				item.dataset.y = y;
+				updateItemPosition(item);
+			}
+			
+			// Mouse up handler
+			function handleMouseUp() {
+				const item = document.querySelector('.dragging');
+				if (item) {
+					item.classList.remove('dragging');
+				}
+				document.removeEventListener('mousemove', handleMouseMove);
+				document.removeEventListener('mouseup', handleMouseUp);
+			}
+			
+			// Touch end handler
+			function handleTouchEnd() {
+				const item = document.querySelector('.dragging');
+				if (item) {
+					item.classList.remove('dragging');
+				}
+				document.removeEventListener('touchmove', handleTouchMove);
+				document.removeEventListener('touchend', handleTouchEnd);
+			}
+			
+			// Shooting Stars Background Animation
+			const canvas = document.querySelector(".stars-bg");
+			const ctx = canvas?.getContext("2d");
+			
+			if (canvas && ctx) {
+				let stars = [];
+				let shootingStars = [];
+				
+				function resizeCanvas() {
+					canvas.width = window.innerWidth;
+					canvas.height = window.innerHeight;
+				}
+				resizeCanvas();
+				window.addEventListener("resize", resizeCanvas);
+				
+				function createStars() {
+					const area = canvas.width * canvas.height;
+					const numStars = Math.floor(area * 0.00008);
+					stars = Array.from({ length: numStars }, () => ({
+						x: Math.random() * canvas.width,
+						y: Math.random() * canvas.height,
+						r: Math.random() * 0.7 + 0.5,
+						opacity: Math.random() * 0.5 + 0.5,
+						twinkleSpeed: Math.random() * 0.5 + 0.5,
+						twinklePhase: Math.random() * Math.PI * 2,
+					}));
+				}
+				createStars();
+				window.addEventListener("resize", createStars);
+				
+				function drawStars() {
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					stars.forEach((star) => {
+						star.opacity = 0.5 + Math.abs(Math.sin((Date.now() * 0.001) / star.twinkleSpeed + star.twinklePhase) * 0.5);
+						ctx.beginPath();
+						ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+						ctx.fillStyle = `rgba(255,255,255,${star.opacity})`;
+						ctx.fill();
+					});
+				}
+				
+				function createShootingStar() {
+					const side = Math.floor(Math.random() * 4);
+					let x, y, angle;
+					if (side === 0) {
+						x = Math.random() * canvas.width;
+						y = 0;
+						angle = 45 + Math.random() * 30;
+					} else if (side === 1) {
+						x = canvas.width;
+						y = Math.random() * canvas.height;
+						angle = 135 + Math.random() * 30;
+					} else if (side === 2) {
+						x = Math.random() * canvas.width;
+						y = canvas.height;
+						angle = 225 + Math.random() * 30;
+					} else {
+						x = 0;
+						y = Math.random() * canvas.height;
+						angle = 315 + Math.random() * 30;
+					}
+					const speed = 8 + Math.random() * 12;
+					shootingStars.push({
+						x, y, angle,
+						length: 120 + Math.random() * 60,
+						life: 0,
+						maxLife: 80 + Math.random() * 40,
+						speed,
+						curveIntensity: (Math.random() - 0.5) * 0.03,
+						sparkles: [],
+					});
+				}
+				
+				function drawShootingStars() {
+					shootingStars.forEach((star) => {
+						star.angle += star.curveIntensity;
+						const rad = (star.angle * Math.PI) / 180;
+						const dx = Math.cos(rad) * star.speed;
+						const dy = Math.sin(rad) * star.speed;
+						star.x += dx;
+						star.y += dy;
+						star.life++;
+						
+						if (Math.random() < 0.6) {
+							star.sparkles.push({
+								x: star.x + (Math.random() - 0.5) * 30,
+								y: star.y + (Math.random() - 0.5) * 30,
+								life: 0,
+								maxLife: 20 + Math.random() * 15,
+								opacity: 1,
+							});
+						}
+						
+						star.sparkles.forEach((sparkle) => {
+							sparkle.life++;
+							sparkle.opacity *= 0.93;
+							ctx.save();
+							ctx.globalAlpha = sparkle.opacity;
+							ctx.beginPath();
+							ctx.arc(sparkle.x, sparkle.y, 1.5, 0, Math.PI * 2);
+							ctx.fillStyle = "#fff";
+							ctx.fill();
+							ctx.restore();
+						});
+						
+						star.sparkles = star.sparkles.filter(sparkle => sparkle.life < sparkle.maxLife);
+						
+						ctx.save();
+						ctx.translate(star.x, star.y);
+						ctx.rotate(rad);
+						
+						const grad = ctx.createLinearGradient(0, 0, star.length, 0);
+						grad.addColorStop(0, "rgba(255,255,255,0)");
+						grad.addColorStop(0.2, "rgba(0, 0, 255, 0.4)");
+						grad.addColorStop(0.6, "rgba(128, 0, 128, 0.8)");
+						grad.addColorStop(1, "rgba(255,255,255,1)");
+						
+						ctx.fillStyle = grad;
+						ctx.fillRect(0, -1.5, star.length, 3);
+						
+						ctx.fillStyle = "rgba(255,255,255,0.9)";
+						ctx.fillRect(star.length * 0.9, -0.5, star.length * 0.1, 1);
+						
+						ctx.restore();
+					});
+					
+					shootingStars = shootingStars.filter(star => 
+						star.life < star.maxLife &&
+						star.x > -100 && star.x < canvas.width + 100 &&
+						star.y > -100 && star.y < canvas.height + 100
+					);
+				}
+				
+				function animate() {
+					drawStars();
+					drawShootingStars();
+					requestAnimationFrame(animate);
+				}
+				animate();
+				
+				setInterval(createShootingStar, 5000 + Math.random() * 2000);
+			}
+		</script>
+	</body>
+</html>
+

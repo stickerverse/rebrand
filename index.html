@@ -297,7 +297,7 @@
     <script>
       (function () {
         // Only suppress in production
-        if (typeof window !== "undefined" && "production" === "production") {
+        if (typeof window !== "undefined" && process.env.NODE_ENV === "production") {
           // Store original console methods
           const originalConsole = {
             log: console.log,
@@ -566,16 +566,8 @@
         }
       }
       .headerButton.jsx-36d2212abb96ee5d {
-        background: rgba(255, 255, 255, 0.05) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        -webkit-box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-        -moz-box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
-        backdrop-filter: blur(12px) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
       }
       .headerButton.jsx-36d2212abb96ee5d:hover {
         background: rgba(255, 255, 255, 0.1) !important;
@@ -2039,6 +2031,292 @@
         }
       }
     </style>
+
+    <!-- Interactive Background Styles -->
+    <style>
+      /* Codrops Grid Styles - Updated for Sticker Animation */
+      .hero-section .grid {
+          position: fixed;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          z-index: 100;
+          pointer-events: none;
+      }
+
+      .grid__item {
+          position: absolute !important;
+          cursor: grab !important;
+          user-select: none !important;
+          -webkit-user-select: none !important;
+          touch-action: none !important;
+          z-index: 100 !important;
+          width: 150px !important;
+          height: 150px !important;
+          pointer-events: auto !important;
+      }
+      
+      .grid__item-img {
+          background-size: contain !important;
+          background-repeat: no-repeat !important;
+          background-position: center !important;
+          width: 100% !important;
+          height: 100% !important;
+          pointer-events: none !important;
+          background-size: contain;
+          background-position: center;
+          background-repeat: no-repeat;
+          will-change: transform;
+          transform: translateZ(0);
+          pointer-events: auto;
+          flex: none;
+      }
+
+      /* Position Classes */
+      .pos-1 { grid-area: 3 / 5 / 17 / 19; }
+      .pos-2 { grid-area: 8 / 28 / 22 / 40; }
+      .pos-3 { grid-area: 15 / 45 / 29 / 50; }
+      .pos-4 { grid-area: 25 / 8 / 39 / 20; }
+      .pos-5 { grid-area: 32 / 35 / 46 / 47; }
+      .pos-6 { grid-area: 38 / 15 / 49 / 27; }
+      .pos-7 { grid-area: 42 / 2 / 50 / 14; }
+      .pos-8 { grid-area: 35 / 22 / 48 / 34; }
+      .pos-9 { grid-area: 40 / 38 / 50 / 48; }
+      .pos-10 { grid-area: 30 / 42 / 44 / 50; }
+      .pos-11 { grid-area: 5 / 22 / 19 / 36; }
+      .pos-12 { grid-area: 12 / 8 / 26 / 22; }
+      .pos-13 { grid-area: 18 / 38 / 32 / 48; }
+      .pos-14 { grid-area: 22 / 25 / 36 / 39; }
+      .pos-15 { grid-area: 28 / 5 / 42 / 19; }
+      .pos-16 { grid-area: 33 / 18 / 47 / 32; }
+      .pos-17 { grid-area: 10 / 32 / 24 / 46; }
+      .pos-18 { grid-area: 20 / 12 / 34 / 26; }
+      .pos-19 { grid-area: 45 / 8 / 49 / 20; }
+      .pos-20 { grid-area: 47 / 28 / 50 / 40; }
+      
+      .dragging {
+          cursor: grabbing !important;
+          z-index: 1000 !important;
+      }
+    </style>
+
+    <!-- Interactive Background Styles -->
+    <style>
+      /* Interactive Background Styles */
+      body {
+        overflow-x: hidden;
+      }
+      
+      /* Make grid items draggable */
+      .grid__item {
+        position: absolute !important;
+        cursor: grab !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        touch-action: none !important;
+        z-index: 1 !important;
+        width: 150px !important;
+        height: 150px !important;
+        transition: transform 0.3s ease-out;
+      }
+      
+      /* Logo container styling */
+      .logo-container {
+        position: relative;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10vh;
+        pointer-events: auto;
+      }
+      
+      /* Logo styling */
+      .logo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+      
+      .logo-text {
+        font-size: 5rem;
+        font-weight: 900;
+        color: #2d2d2d;
+        line-height: 0.9;
+        text-align: center;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: -0.05em;
+      }
+      
+      .logo-icon {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        background-color: #2d2d2d;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .logo-face {
+        position: relative;
+        width: 60px;
+        height: 30px;
+      }
+      
+      .logo-face:before, .logo-face:after {
+        content: '';
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        background: white;
+        border-radius: 50%;
+        top: 0;
+      }
+      
+      .logo-face:before {
+        left: 10px;
+      }
+      
+      .logo-face:after {
+        right: 10px;
+      }
+      
+      .logo-face:after {
+        content: '';
+        position: absolute;
+        width: 40px;
+        height: 20px;
+        border: 3px solid white;
+        border-top: none;
+        border-radius: 0 0 20px 20px;
+        top: 10px;
+        left: 10px;
+      }
+      
+      /* Heart decorations */
+      .logo:before, .logo:after {
+        content: '♥';
+        position: absolute;
+        color: #db7093;
+        font-size: 2rem;
+      }
+      
+      .logo:before {
+        left: -30px;
+        top: 20px;
+      }
+      
+      .logo:after {
+        right: -30px;
+        bottom: 20px;
+      }
+      
+      /* Tagline styling */
+      .tagline {
+        font-size: 1.2rem;
+        color: #555;
+        margin-top: 1rem;
+        font-weight: 500;
+      }
+      
+      /* Center button styling */
+      .center-button {
+        padding: 1rem 2rem;
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: white;
+        background-color: #db7093;
+        border: none;
+        border-radius: 50px;
+        box-shadow: 0 5px 15px rgba(219, 112, 147, 0.5);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+      
+      .center-button:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 20px rgba(219, 112, 147, 0.6);
+      }
+      
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 10px 25px rgba(99, 102, 241, 0.5), 
+                      0 0 40px rgba(139, 92, 246, 0.3),
+                      0 0 80px rgba(139, 92, 246, 0.2);
+        }
+        50% {
+          box-shadow: 0 10px 25px rgba(99, 102, 241, 0.5), 
+                      0 0 60px rgba(139, 92, 246, 0.4),
+                      0 0 100px rgba(139, 92, 246, 0.3);
+        }
+        100% {
+          box-shadow: 0 10px 25px rgba(99, 102, 241, 0.5), 
+                      0 0 40px rgba(139, 92, 246, 0.3),
+                      0 0 80px rgba(139, 92, 246, 0.2);
+        }
+      }
+      
+      /* Ensure images display properly */
+      .grid__item-img {
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        width: 100% !important;
+        height: 100% !important;
+        pointer-events: none !important;
+      }
+      
+      /* Center grid and content */
+      .grid {
+        position: fixed !important;
+        pointer-events: none !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        top: 40% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 0 !important;
+      }
+      
+      /* Interactive Background Container */
+      .interactive-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 0;
+        pointer-events: none;
+      }
+      
+      /* Stars Background */
+      .stars-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+      }
+      
+      /* Add dragging class */
+      .dragging {
+        cursor: grabbing !important;
+        z-index: 1000 !important;
+      }
+    </style>
   </head>
   <body>
     <svg id="svg-bg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
@@ -2053,6 +2331,7 @@
     <noscript
       ><iframe
         src="https://www.googletagmanager.com/ns.html?id=GTM-MRXTP89"
+        title="Google Tag Manager"
         height="0"
         width="0"
         style="display: none; visibility: hidden"
@@ -2138,7 +2417,7 @@
     <div id="__next">
       <div
         class="min-h-screen text-white relative"
-        style="background-color: #ffffff; font-family: Inter, sans-serif"
+        style="background-color: #000000; font-family: Inter, sans-serif"
       >
         <header
           style="
@@ -2243,6 +2522,7 @@
               </div>
               <div
                 class="jsx-36d2212abb96ee5d hidden lg:flex flex-1 items-center relative search-dropdown-container mx-4"
+                aria-label="Sticker type selection dropdown"
               >
                 <button
                   class="jsx-36d2212abb96ee5d headerButton flex-1 px-4 py-2 pr-12 rounded-lg font-medium text-white transition-all duration-200 transform hover:scale-[1.005] text-left"
@@ -2272,6 +2552,7 @@
               <nav
                 style="letter-spacing: -0.5px"
                 class="jsx-36d2212abb96ee5d hidden lg:flex items-center gap-4"
+                aria-label="Main navigation"
               >
                 <a
                   class="px-4 py-2 rounded-lg font-medium text-white transition-all duration-200 transform hover:scale-105 flex items-center gap-2"
@@ -2353,8 +2634,7 @@
           </div>
           <div
             style="
-              background-color: rgba(3, 1, 64, 0.95);
-              backdrop-filter: blur(10px);
+              background-color: rgba(3, 1, 64, 0.98);
               border: 1px solid rgba(255, 255, 255, 0.2);
             "
             class="jsx-36d2212abb96ee5d fixed top-0 left-0 h-full w-80 z-50 transform transition-transform duration-300 ease-in-out lg:hidden -translate-x-full"
@@ -2380,7 +2660,7 @@
                 >
                   Quick Access:
                 </h3>
-                <div class="jsx-36d2212abb96ee5d grid grid-cols-2 gap-3">
+                <div class="jsx-36d2212abb96ee5d grid grid-cols-2 gap-3" aria-label="Product navigation grid">
                   <a
                     class="flex flex-col items-center p-4 rounded-lg hover:bg-white/10 cursor-pointer transition-all duration-200 group"
                     href="products/vinyl-stickers"
@@ -2534,7 +2814,7 @@
                   >
                 </div>
               </div>
-              <nav class="jsx-36d2212abb96ee5d space-y-2">
+              <nav class="jsx-36d2212abb96ee5d space-y-2" aria-label="Mobile navigation menu">
                 <a
                   class="w-full text-left px-4 py-3 rounded-lg text-white hover:bg-white hover:bg-opacity-90 hover:text-gray-800 transition-all duration-200 flex items-center"
                   href="deals"
@@ -2569,127 +2849,77 @@
         <main
           style="padding-top: calc(4rem + var(--header-alerts-height, 0px))"
         >
+          <!-- Empty Hero Section -->
           <section class="jsx-c7c892e1b4771724 relative pt-[20px]">
-            <div
-              class="jsx-c7c892e1b4771724 w-[95%] md:w-[90%] xl:w-[95%] 2xl:w-[75%] mx-auto px-4 pb-4"
-            >
-              <div
-                style="
-                  border: 1px solid rgba(255, 255, 255, 0.1);
-                  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-                  backdrop-filter: blur(12px);
-                "
-                class="jsx-c7c892e1b4771724 rounded-2xl pt-12 px-12 pb-8 relative overflow-hidden min-h-[400px] hero-banner"
-              >
+            <!-- Hero Content -->
+            <div class="jsx-c7c892e1b4771724 w-[95%] md:w-[90%] xl:w-[95%] 2xl:w-[75%] mx-auto px-4 pb-4">
                 <div class="jsx-c7c892e1b4771724 text-center relative z-10">
-                  <div class="jsx-c7c892e1b4771724 mb-4">
-                    <div
-                      class="jsx-c7c892e1b4771724 hidden md:flex items-center justify-center"
-                    >
-                      <div
-                        style="
-                          background: linear-gradient(
-                            135deg,
-                            rgba(255, 215, 19, 0.3) 0%,
-                            rgba(255, 215, 19, 0.15) 50%,
-                            rgba(255, 215, 19, 0.05) 100%
-                          );
-                          border: 1px solid rgba(255, 215, 19, 0.4);
-                          backdrop-filter: blur(12px);
-                          color: #fbbf24;
-                        "
-                        class="jsx-c7c892e1b4771724 px-4 py-2 rounded-full text-xs font-medium flex items-center gap-2"
-                      >
-                        <img
-                          src="https://res.cloudinary.com/dxcnvqk6b/image/upload/v1753923671/StickerShuttle_CoinIcon_aperue.png"
-                          alt="Credits"
-                          class="jsx-c7c892e1b4771724 w-4 h-4 object-contain"
-                        /><span class="jsx-c7c892e1b4771724"
-                          >Earn 5% back on every order</span
-                        >
-                      </div>
-                    </div>
-                    <div
-                      style="color: #fbbf24"
-                      class="jsx-c7c892e1b4771724 md:hidden flex items-center justify-center gap-2 text-xs"
-                    >
-                      <img
-                        src="https://res.cloudinary.com/dxcnvqk6b/image/upload/v1753923671/StickerShuttle_CoinIcon_aperue.png"
-                        alt="Credits"
-                        class="jsx-c7c892e1b4771724 w-3 h-3 object-contain"
-                      /><span class="jsx-c7c892e1b4771724"
-                        >Earn 5% back on every order</span
-                      >
-                    </div>
-                  </div>
-                  <h1
-                    style="
-                      font-family: Rubik, Inter, system-ui, -apple-system,
-                        sans-serif;
-                      font-weight: 700;
-                    "
-                    class="jsx-c7c892e1b4771724 text-4xl sm:text-5xl md:text-6xl mb-4 leading-none"
-                  >
-                    <span class="jsx-c7c892e1b4771724 block md:inline"
-                      >Tired of waiting</span
-                    ><span class="jsx-c7c892e1b4771724 block md:inline">
-                      weeks to get</span
-                    ><span class="jsx-c7c892e1b4771724 block md:block">
-                      your stickers?</span
-                    >
-                  </h1>
-                  <p
-                    class="jsx-c7c892e1b4771724 text-lg sm:text-xl mb-6 text-purple-100"
-                  >
-                    <span class="jsx-c7c892e1b4771724 block sm:inline md:block"
-                      >See why brands like Amazon, Nike Football, and
-                      thousands</span
-                    ><span
-                      class="jsx-c7c892e1b4771724 block sm:inline md:inline"
-                      >of others trust us with their business.</span
-                    >
-                  </p>
-                  <div
-                    class="jsx-c7c892e1b4771724 flex flex-col items-center gap-4 mb-4"
-                  >
-                    <a
-                      href="products"
-                      class="jsx-c7c892e1b4771724 primaryButton px-12 py-4 font-bold text-lg transition-all duration-300 transform hover:scale-[1.004] inline-block rounded-lg"
-                      >Start Here →</a
-                    ><a
-                      href="products/sample-packs"
-                      class="jsx-c7c892e1b4771724 text-white hover:text-purple-200 transition pb-0 md:pb-0"
-                      >Order Sample Pack →</a
-                    ><a
-                      href="deals"
-                      class="jsx-c7c892e1b4771724 text-white hover:text-purple-200 transition pb-8 md:pb-0 block md:hidden"
-                      >🔥 Deals →</a
-                    >
-                  </div>
+                    <!-- Hero content can go here if needed -->
                 </div>
-              </div>
             </div>
           </section>
-          <section class="jsx-c7c892e1b4771724 py-4">
-            <div
-              class="jsx-c7c892e1b4771724 w-[95%] md:w-[90%] xl:w-[95%] 2xl:w-[75%] mx-auto px-4"
-            >
-              <div class="jsx-c7c892e1b4771724 flex justify-center mb-4">
-                <div
-                  style="
-                    background: rgba(255, 255, 255, 0.05);
-                    border: 1px solid rgba(255, 255, 255, 0.1);
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
-                      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-                    backdrop-filter: blur(12px);
-                  "
-                  class="jsx-c7c892e1b4771724 px-4 py-1.5 rounded-full text-center text-sm text-gray-300"
-                >
-                  Brands we print for:
-                </div>
+          
+          <!-- Interactive Animation Section -->
+          <section class="jsx-c7c892e1b4771724 relative py-10 interactive-section" style="min-height: 70vh; overflow: hidden;">
+            <!-- Interactive Background -->
+            <div class="interactive-background">
+              <!-- Shooting Stars Background Canvas -->
+              <canvas class="stars-bg"></canvas>
+              
+              <!-- Interactive Stickers -->
+              <div class="grid">
+                <div class="grid__item pos-1"><div class="grid__item-img" style="background-image:url(dist/dino.png);"></div></div>
+                <div class="grid__item pos-2"><div class="grid__item-img" style="background-image:url(dist/dietcoke.png);"></div></div>
+                <div class="grid__item pos-3"><div class="grid__item-img" style="background-image:url(dist/kittyabduction.png);"></div></div>
+                <div class="grid__item pos-4"><div class="grid__item-img" style="background-image:url(dist/lego.png);"></div></div>
+                <div class="grid__item pos-5"><div class="grid__item-img" style="background-image:url(dist/lilweezy.png);"></div></div>
+                <div class="grid__item pos-6"><div class="grid__item-img" style="background-image:url(dist/mandoyoda.png);"></div></div>
+                <div class="grid__item pos-7"><div class="grid__item-img" style="background-image:url(dist/marioturtle.png);"></div></div>
+                <div class="grid__item pos-8"><div class="grid__item-img" style="background-image:url(dist/monkeycig.png);"></div></div>
+                <div class="grid__item pos-9"><div class="grid__item-img" style="background-image:url(dist/picklerick.png);"></div></div>
+                <div class="grid__item pos-10"><div class="grid__item-img" style="background-image:url(dist/holoship.png);"></div></div>
+                <div class="grid__item pos-11"><div class="grid__item-img" style="background-image:url(dist/alienspacemanrocket.png);"></div></div>
+                <div class="grid__item pos-12"><div class="grid__item-img" style="background-image:url(dist/arcade.png);"></div></div>
+                <div class="grid__item pos-13"><div class="grid__item-img" style="background-image:url(dist/chaosracoon.png);"></div></div>
+                <div class="grid__item pos-14"><div class="grid__item-img" style="background-image:url(dist/doyoulikemystickerskitty.png);"></div></div>
+                <div class="grid__item pos-15"><div class="grid__item-img" style="background-image:url(dist/eyegalxy.png);"></div></div>
+                <div class="grid__item pos-16"><div class="grid__item-img" style="background-image:url(dist/gameboy.png);"></div></div>
+                <div class="grid__item pos-17"><div class="grid__item-img" style="background-image:url(dist/grosseye.png);"></div></div>
+                <div class="grid__item pos-18"><div class="grid__item-img" style="background-image:url(dist/kittycracker.png);"></div></div>
+                <div class="grid__item pos-19"><div class="grid__item-img" style="background-image:url(dist/nointernet.png);"></div></div>
+                <div class="grid__item pos-20"><div class="grid__item-img" style="background-image:url(dist/threeeyedkitty.png);"></div></div>
               </div>
-              <div class="jsx-c7c892e1b4771724 relative overflow-hidden">
+            </div>
+
+
+              <!-- Hero Content with Center Button -->
+              <div class="jsx-c7c892e1b4771724 w-[95%] md:w-[90%] xl:w-[95%] 2xl:w-[75%] mx-auto px-4 pb-4">
+                  <!-- Center content with button -->
+                  <div class="jsx-c7c892e1b4771724 text-center relative z-10">
+                      <!-- Logo and button container -->
+                      <div class="logo-container">
+                          <div class="logo">
+                              <h1 class="logo-text">STICKER<br>SHUTTLE</h1>
+                              <div class="logo-icon">
+                                  <div class="logo-face"></div>
+                              </div>
+                          </div>
+                          <a href="products" class="center-button">
+                              Let's make stickers!!
+                          </a>
+                          <p class="tagline">High quality custom stickers made with love in Portland, Oregon</p>
+                      </div>
+                  </div>
+              </div>
+          </section>
+          <section class="jsx-c7c892e1b4771724 py-4">
+              <div class="jsx-c7c892e1b4771724 w-[95%] md:w-[90%] xl:w-[95%] 2xl:w-[75%] mx-auto px-4">
+                <div class="jsx-c7c892e1b4771724 flex justify-center mb-4">
+                  <div class="jsx-c7c892e1b4771724 px-4 py-1.5 rounded-full text-center text-sm text-gray-300">
+                    Brands we print for:
+                  </div>
+                </div>
+                <div class="jsx-c7c892e1b4771724 relative overflow-hidden">
                 <div
                   style="
                     animation: scroll 35s linear infinite;
@@ -4237,27 +4467,9 @@
             </div>
           </section>
         </main>
-        <footer
-          style="
-            background-color: #030140;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-          "
-          class="jsx-14955ab07302629c py-12 mt-8"
-        >
-          <div
-            class="jsx-14955ab07302629c w-[95%] md:w-[90%] xl:w-[90%] 2xl:w-[75%] mx-auto px-4"
-          >
-            <div
-              class="jsx-14955ab07302629c grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8"
-            >
-              <div class="jsx-14955ab07302629c">
-                <h3
-                  class="jsx-14955ab07302629c text-white font-semibold text-lg mb-4 flex items-center"
-                >
-                  <span class="jsx-14955ab07302629c mr-2">🏷️</span>Products
-                </h3>
-                <ul class="jsx-14955ab07302629c space-y-1">
-                  <li class="jsx-14955ab07302629c">
+      </div>
+      <!--$--><!--/$-->
+    </div>
                     <a
                       class="text-gray-300 hover:text-white transition-colors duration-200 text-sm"
                       href="products/vinyl-stickers"
@@ -4614,6 +4826,511 @@
         }
       });
     </script>
-  </body>
-  <!-- Mirrored from www.stickershuttle.com/ by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 15 Aug 2025 12:32:20 GMT -->
+    
+    <script>
+        // Initialize stars background
+        function initStarsBackground() {
+            const canvas = document.querySelector(".stars-bg");
+            const ctx = canvas?.getContext("2d");
+            
+            if (canvas && ctx) {
+                let stars = [];
+                let shootingStars = [];
+                
+                function resizeCanvas() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                }
+                resizeCanvas();
+                window.addEventListener("resize", resizeCanvas);
+                
+                function createStars() {
+                    const area = canvas.width * canvas.height;
+                    const numStars = Math.floor(area * 0.00008);
+                    stars = Array.from({ length: numStars }, () => ({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        r: Math.random() * 0.7 + 0.5,
+                        opacity: Math.random() * 0.5 + 0.5,
+                        twinkleSpeed: Math.random() * 0.5 + 0.5,
+                        twinklePhase: Math.random() * Math.PI * 2,
+                    }));
+                }
+                createStars();
+                window.addEventListener("resize", createStars);
+                
+                function drawStars() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    stars.forEach((star) => {
+                        star.opacity = 0.5 + Math.abs(Math.sin((Date.now() * 0.001) / star.twinkleSpeed + star.twinklePhase) * 0.5);
+                        ctx.beginPath();
+                        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(255,255,255,${star.opacity})`;
+                        ctx.fill();
+                    });
+                }
+                
+                function createShootingStar() {
+                    const side = Math.floor(Math.random() * 4);
+                    let x, y, angle;
+                    if (side === 0) {
+                        x = Math.random() * canvas.width;
+                        y = 0;
+                        angle = 45 + Math.random() * 30;
+                    } else if (side === 1) {
+                        x = canvas.width;
+                        y = Math.random() * canvas.height;
+                        angle = 135 + Math.random() * 30;
+                    } else if (side === 2) {
+                        x = Math.random() * canvas.width;
+                        y = canvas.height;
+                        angle = 225 + Math.random() * 30;
+                    } else {
+                        x = 0;
+                        y = Math.random() * canvas.height;
+                        angle = 315 + Math.random() * 30;
+                    }
+                    const speed = 8 + Math.random() * 12;
+                    shootingStars.push({
+                        x, y, angle,
+                        length: 120 + Math.random() * 60,
+                        life: 0,
+                        maxLife: 80 + Math.random() * 40,
+                        speed,
+                        curveIntensity: (Math.random() - 0.5) * 0.03,
+                        sparkles: [],
+                    });
+                }
+                
+                function drawShootingStars() {
+                    shootingStars.forEach((star) => {
+                        star.angle += star.curveIntensity;
+                        const rad = (star.angle * Math.PI) / 180;
+                        const dx = Math.cos(rad) * star.speed;
+                        const dy = Math.sin(rad) * star.speed;
+                        star.x += dx;
+                        star.y += dy;
+                        star.life++;
+                        
+                        if (Math.random() < 0.6) {
+                            star.sparkles.push({
+                                x: star.x + (Math.random() - 0.5) * 30,
+                                y: star.y + (Math.random() - 0.5) * 30,
+                                life: 0,
+                                maxLife: 20 + Math.random() * 15,
+                                opacity: 1,
+                            });
+                        }
+                        
+                        star.sparkles.forEach((sparkle) => {
+                            sparkle.life++;
+                            sparkle.opacity *= 0.93;
+                            ctx.save();
+                            ctx.globalAlpha = sparkle.opacity;
+                            ctx.beginPath();
+                            ctx.arc(sparkle.x, sparkle.y, 1.5, 0, Math.PI * 2);
+                            ctx.fillStyle = "#fff";
+                            ctx.fill();
+                            ctx.restore();
+                        });
+                        
+                        star.sparkles = star.sparkles.filter(sparkle => sparkle.life < sparkle.maxLife);
+                        
+                        ctx.save();
+                        ctx.translate(star.x, star.y);
+                        ctx.rotate(rad);
+                        
+                        const grad = ctx.createLinearGradient(0, 0, star.length, 0);
+                        grad.addColorStop(0, "rgba(255,255,255,0)");
+                        grad.addColorStop(0.2, "rgba(0, 0, 255, 0.4)");
+                        grad.addColorStop(0.6, "rgba(128, 0, 128, 0.8)");
+                        grad.addColorStop(1, "rgba(255,255,255,1)");
+                        
+                        ctx.fillStyle = grad;
+                        ctx.fillRect(0, -1.5, star.length, 3);
+                        
+                        ctx.fillStyle = "rgba(255,255,255,0.9)";
+                        ctx.fillRect(star.length * 0.9, -0.5, star.length * 0.1, 1);
+                        
+                        ctx.restore();
+                    });
+                    
+                    shootingStars = shootingStars.filter(star => 
+                        star.life < star.maxLife &&
+                        star.x > -100 && star.x < canvas.width + 100 &&
+                        star.y > -100 && star.y < canvas.height + 100
+                    );
+                }
+                
+                function animate() {
+                    drawStars();
+                    drawShootingStars();
+                    requestAnimationFrame(animate);
+                }
+                animate();
+                
+                setInterval(createShootingStar, 5000 + Math.random() * 2000);
+            }
+        }
+    </script>
+    
+    <!-- Interactive Background Scripts -->
+    <script>
+      // Remove loading class immediately
+      document.body.classList.remove('loading');
+      
+      // Initialize direct DOM manipulation for dragging
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded - setting up drag functionality');
+        setupDragging();
+      });
+      
+      // Also set up on window load to ensure everything is ready
+      window.addEventListener('load', function() {
+        console.log('Window loaded - ensuring drag is set up');
+        document.body.classList.remove('loading');
+        setupDragging();
+        
+        // Position items randomly
+        randomizePositions();
+      });
+      
+      // Function to set up dragging
+      function setupDragging() {
+        console.log('Setting up dragging for all grid items');
+        const gridItems = document.querySelectorAll('.grid__item');
+        console.log('Found', gridItems.length, 'grid items');
+        
+        gridItems.forEach((item, index) => {
+          console.log('Setting up item', index);
+          
+          // Store position directly on the element
+          if (!item.dataset.x) item.dataset.x = '0';
+          if (!item.dataset.y) item.dataset.y = '0';
+          
+          // Apply initial position
+          updateItemPosition(item);
+          
+          // Add event listeners
+          item.addEventListener('mousedown', handleMouseDown);
+          item.addEventListener('touchstart', handleTouchStart, {passive: false});
+        });
+      }
+      
+      // Position items in a scattered pattern like the reference image
+      function randomizePositions() {
+        const gridItems = document.querySelectorAll('.grid__item');
+        const padding = 80; // Minimum distance from edges
+        
+        // Calculate viewport dimensions
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        // Define the central area to keep clear for the logo
+        const centerX = viewportWidth / 2;
+        const centerY = viewportHeight * 0.5;
+        const clearRadius = Math.min(viewportWidth, viewportHeight) * 0.25;
+        
+        // Create zones for better distribution
+        const zones = [
+          // Top left
+          { x: padding, y: padding, width: centerX - clearRadius, height: centerY - clearRadius },
+          // Top right
+          { x: centerX + clearRadius, y: padding, width: viewportWidth - (centerX + clearRadius) - padding, height: centerY - clearRadius },
+          // Bottom left
+          { x: padding, y: centerY + clearRadius, width: centerX - clearRadius, height: viewportHeight - (centerY + clearRadius) - padding },
+          // Bottom right
+          { x: centerX + clearRadius, y: centerY + clearRadius, width: viewportWidth - (centerX + clearRadius) - padding, height: viewportHeight - (centerY + clearRadius) - padding },
+          // Left center
+          { x: padding, y: centerY - clearRadius/2, width: centerX - clearRadius, height: clearRadius },
+          // Right center
+          { x: centerX + clearRadius, y: centerY - clearRadius/2, width: viewportWidth - (centerX + clearRadius) - padding, height: clearRadius }
+        ];
+        
+        gridItems.forEach((item, index) => {
+          // Select a zone based on index
+          const zone = zones[index % zones.length];
+          
+          // Random position within the zone
+          const x = zone.x + Math.random() * zone.width;
+          const y = zone.y + Math.random() * zone.height;
+          
+          // Ensure stickers stay within viewport bounds
+          const boundedX = Math.max(padding, Math.min(viewportWidth - padding, x));
+          const boundedY = Math.max(padding, Math.min(viewportHeight - padding, y));
+          
+          // Apply position
+          item.dataset.x = boundedX;
+          item.dataset.y = boundedY;
+          
+          // Random rotation (-30 to +30 degrees)
+          const rotation = Math.random() * 60 - 30;
+          
+          // Random scale (0.7 to 1.3) - makes some stickers bigger and some smaller
+          const scale = 0.7 + Math.random() * 0.6;
+          
+          // Apply rotation and scale
+          item.style.transform = `rotate(${rotation}deg) scale(${scale})`;
+          
+          // Add a z-index based on scale to create depth
+          item.style.zIndex = Math.floor(scale * 10);
+          
+          updateItemPosition(item);
+        });
+      }
+      
+      // Update item position based on stored coordinates while preserving rotation and scale
+      function updateItemPosition(item) {
+        const x = parseFloat(item.dataset.x) || 0;
+        const y = parseFloat(item.dataset.y) || 0;
+        item.style.left = x + 'px';
+        item.style.top = y + 'px';
+        
+        // Extract any existing rotation and scale
+        const currentTransform = item.style.transform || '';
+        const rotateMatch = currentTransform.match(/rotate\(([^)]+)\)/);
+        const scaleMatch = currentTransform.match(/scale\(([^)]+)\)/);
+        
+        const rotation = rotateMatch ? rotateMatch[1] : '0deg';
+        const scale = scaleMatch ? scaleMatch[1] : '1';
+        
+        // Apply position while preserving rotation and scale
+        if (!currentTransform.includes('rotate') && !currentTransform.includes('scale')) {
+          item.style.transform = `rotate(${rotation}) scale(${scale})`;
+        }
+      }
+      
+      // Mouse down handler
+      function handleMouseDown(e) {
+        e.preventDefault();
+        const item = e.currentTarget;
+        item.classList.add('dragging');
+        
+        const rect = item.getBoundingClientRect();
+        const offsetX = e.clientX - rect.left;
+        const offsetY = e.clientY - rect.top;
+        
+        item.dataset.offsetX = offsetX;
+        item.dataset.offsetY = offsetY;
+        
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+      }
+      
+      // Touch start handler
+      function handleTouchStart(e) {
+        e.preventDefault();
+        const item = e.currentTarget;
+        item.classList.add('dragging');
+        
+        const touch = e.touches[0];
+        const rect = item.getBoundingClientRect();
+        const offsetX = touch.clientX - rect.left;
+        const offsetY = touch.clientY - rect.top;
+        
+        item.dataset.offsetX = offsetX;
+        item.dataset.offsetY = offsetY;
+        
+        document.addEventListener('touchmove', handleTouchMove, {passive: false});
+        document.addEventListener('touchend', handleTouchEnd);
+      }
+      
+      // Mouse move handler
+      function handleMouseMove(e) {
+        const item = document.querySelector('.dragging');
+        if (!item) return;
+        
+        e.preventDefault();
+        const offsetX = parseFloat(item.dataset.offsetX) || 0;
+        const offsetY = parseFloat(item.dataset.offsetY) || 0;
+        
+        const x = e.clientX - offsetX;
+        const y = e.clientY - offsetY;
+        
+        item.dataset.x = x;
+        item.dataset.y = y;
+        updateItemPosition(item);
+      }
+      
+      // Touch move handler
+      function handleTouchMove(e) {
+        const item = document.querySelector('.dragging');
+        if (!item) return;
+        
+        e.preventDefault();
+        const touch = e.touches[0];
+        const offsetX = parseFloat(item.dataset.offsetX) || 0;
+        const offsetY = parseFloat(item.dataset.offsetY) || 0;
+        
+        const x = touch.clientX - offsetX;
+        const y = touch.clientY - offsetY;
+        
+        item.dataset.x = x;
+        item.dataset.y = y;
+        updateItemPosition(item);
+      }
+      
+      // Mouse up handler
+      function handleMouseUp() {
+        const item = document.querySelector('.dragging');
+        if (item) {
+          item.classList.remove('dragging');
+        }
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      }
+      
+      // Touch end handler
+      function handleTouchEnd() {
+        const item = document.querySelector('.dragging');
+        if (item) {
+          item.classList.remove('dragging');
+        }
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleTouchEnd);
+      }
+      
+      // Shooting Stars Background Animation
+      const canvas = document.querySelector(".stars-bg");
+      const ctx = canvas?.getContext("2d");
+      
+      if (canvas && ctx) {
+        let stars = [];
+        let shootingStars = [];
+        
+        function resizeCanvas() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
+        
+        function createStars() {
+          const area = canvas.width * canvas.height;
+          const numStars = Math.floor(area * 0.00008);
+          stars = Array.from({ length: numStars }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 0.7 + 0.5,
+            opacity: Math.random() * 0.5 + 0.5,
+            twinkleSpeed: Math.random() * 0.5 + 0.5,
+            twinklePhase: Math.random() * Math.PI * 2,
+          }));
+        }
+        createStars();
+        window.addEventListener("resize", createStars);
+        
+        function drawStars() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          stars.forEach((star) => {
+            star.opacity = 0.5 + Math.abs(Math.sin((Date.now() * 0.001) / star.twinkleSpeed + star.twinklePhase) * 0.5);
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255,255,255,${star.opacity})`;
+            ctx.fill();
+          });
+        }
+        
+        function createShootingStar() {
+          const side = Math.floor(Math.random() * 4);
+          let x, y, angle;
+          if (side === 0) {
+            x = Math.random() * canvas.width;
+            y = 0;
+            angle = 45 + Math.random() * 30;
+          } else if (side === 1) {
+            x = canvas.width;
+            y = Math.random() * canvas.height;
+            angle = 135 + Math.random() * 30;
+          } else if (side === 2) {
+            x = Math.random() * canvas.width;
+            y = canvas.height;
+            angle = 225 + Math.random() * 30;
+          } else {
+            x = 0;
+            y = Math.random() * canvas.height;
+            angle = 315 + Math.random() * 30;
+          }
+          const speed = 8 + Math.random() * 12;
+          shootingStars.push({
+            x, y, angle,
+            length: 120 + Math.random() * 60,
+            life: 0,
+            maxLife: 80 + Math.random() * 40,
+            speed,
+            curveIntensity: (Math.random() - 0.5) * 0.03,
+            sparkles: [],
+          });
+        }
+        
+        function drawShootingStars() {
+          shootingStars.forEach((star) => {
+            star.angle += star.curveIntensity;
+            const rad = (star.angle * Math.PI) / 180;
+            const dx = Math.cos(rad) * star.speed;
+            const dy = Math.sin(rad) * star.speed;
+            star.x += dx;
+            star.y += dy;
+            star.life++;
+            
+            if (Math.random() < 0.6) {
+              star.sparkles.push({
+                x: star.x + (Math.random() - 0.5) * 30,
+                y: star.y + (Math.random() - 0.5) * 30,
+                life: 0,
+                maxLife: 20 + Math.random() * 15,
+                opacity: 1,
+              });
+            }
+            
+            star.sparkles.forEach((sparkle) => {
+              sparkle.life++;
+              sparkle.opacity *= 0.93;
+              ctx.save();
+              ctx.globalAlpha = sparkle.opacity;
+              ctx.beginPath();
+              ctx.arc(sparkle.x, sparkle.y, 1.5, 0, Math.PI * 2);
+              ctx.fillStyle = "#fff";
+              ctx.fill();
+              ctx.restore();
+            });
+            
+            star.sparkles = star.sparkles.filter(sparkle => sparkle.life < sparkle.maxLife);
+            
+            ctx.save();
+            ctx.translate(star.x, star.y);
+            ctx.rotate(rad);
+            
+            const grad = ctx.createLinearGradient(0, 0, star.length, 0);
+            grad.addColorStop(0, "rgba(255,255,255,0)");
+            grad.addColorStop(0.2, "rgba(0, 0, 255, 0.4)");
+            grad.addColorStop(0.6, "rgba(128, 0, 128, 0.8)");
+            grad.addColorStop(1, "rgba(255,255,255,1)");
+            
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, -1.5, star.length, 3);
+            
+            ctx.fillStyle = "rgba(255,255,255,0.9)";
+            ctx.fillRect(star.length * 0.9, -0.5, star.length * 0.1, 1);
+            
+            ctx.restore();
+          });
+          
+          shootingStars = shootingStars.filter(star => 
+            star.life < star.maxLife &&
+            star.x > -100 && star.x < canvas.width + 100 &&
+            star.y > -100 && star.y < canvas.height + 100
+          );
+        }
+        
+        function animate() {
+          drawStars();
+          drawShootingStars();
+          requestAnimationFrame(animate);
+        }
+        animate();
+        
+        setInterval(createShootingStar, 5000 + Math.random() * 2000);
+      }
+    </script>
 </html>

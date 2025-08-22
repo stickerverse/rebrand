@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sticker Customizer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Added Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Lato:wght@400;700&family=Montserrat:wght@400;700&family=Oswald:wght@400;700&family=Lobster&family=Pacifico&family=Caveat&display=swap" rel="stylesheet">
+    <!-- Fabric.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+    <!-- ONNX.js Runtime CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/onnxjs/dist/onnx.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #1E1F22;
+            --sidebar-bg: #2C2D30;
+            --container-bg: #35363A;
+            --text-primary: #EAEAEA;
+            --text-secondary: #9A9A9A;
+            --accent-light: #F3F3F3;
+            --accent-blue: #4285F4;
+            --border-color: #4A4B4F;
+            --font-main: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: #0a0a0a;
+            color: var(--text-primary);
+            padding: 2rem;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        .unified-editor {
+            width: 100%;
+            max-width: 1600px;
+            background-color: var(--bg-dark);
+            border: 1px solid #3a3a3a;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-container {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            height: 80vh;
+            max-height: 800px;
+            padding: 16px;
+        }
+
+        /* ==================================== */
+        /* =========== SIDEBARS =============== */
+        /* ==================================== */
+        .sidebar {
+            background-color: var(--sidebar-bg);
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .left-sidebar {
+            width: 220px;
+        }
+
+        .right-sidebar {
+            width: 320px;
+        }
+
+        .sidebar-header {
+            margin-bottom: 16px;
+        }
+
+        .sidebar-header.right {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .project-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .project-title h1 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .logo-placeholder {
+            width: 22px;
+            height: 22px;
+            background-color: #fff;
+            border-radius: 6px;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        .sidebar-header p {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        
+        .product-selector {
+            margin-bottom: 16px;
+        }
+        
+        .product-selector h3 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .share-btn {
+            background-color: var(--accent-light);
+            color: #000;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .user-avatars {
+            display: flex;
+        }
+
+        .user-avatars img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--sidebar-bg);
+            margin-left: -8px;
+        }
+
+        .user-avatars img:first-child {
+            margin-left: 0;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .top-toolbar {
+            background-color: var(--sidebar-bg);
+            padding: 8px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: absolute;
+            top: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            z-index: 10;
+        }
+
+        .top-toolbar button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .top-toolbar button:hover {
+            background-color: var(--container-bg);
+            color: var(--text-primary);
+        }
+
+        .top-toolbar svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .top-toolbar .divider {
+            width: 1px;
+            height: 20px;
+            background-color: var(--border-color);
+            margin: 0 4px;
+        }
+
+        .canvas-container-outer {
+            flex-grow: 1;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            
+            --line-color: rgba(255, 255, 255, 0.1);
+            --bg-color-start: #2d2d2d;
+            --bg-color-end: #1a1a1a;
+            background-color: #222;
+            background-image: 
+                linear-gradient(30deg, transparent 49%, var(--line-color) 50%, transparent 51%),
+                linear-gradient(330deg, transparent 49%, var(--line-color) 50%, transparent 51%),
+                radial-gradient(ellipse at center, var(--bg-color-start) 0%, var(--bg-color-end) 100%);
+            background-size: 50px 29px, 50px 29px, cover;
+            background-position: center;
+            background-repeat: repeat, repeat, no-repeat;
+            background-attachment: fixed;
+        }
+
+        #image-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Styles for editor panel */
+        .editor-tabs {
+            background: var(--sidebar-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-header {
+            display: flex;
+            background-color: var(--container-bg);
+            padding: 4px;
+            border-radius: 8px;
+            margin: 8px;
+        }
+
+        .editor-tab-btn {
+            flex: 1;
+            padding: 6px 8px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            position: relative;
+            border-radius: 6px;
+        }
+
+        .editor-tab-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .editor-tab-btn.active {
+            color: #000;
+            background-color: var(--accent-light);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 0 12px 12px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+        .tab-content::-webkit-scrollbar { width: 6px; }
+        .tab-content::-webkit-scrollbar-track { background: transparent; }
+        .tab-content::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+
+        .tab-section { margin-bottom: 20px; }
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 12px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 24px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: var(--container-bg);
+        }
+        .upload-area:hover { border-color: var(--accent-blue); }
+        .upload-icon { color: var(--accent-blue); margin-bottom: 8px; }
+        .upload-text { font-size: 13px; font-weight: 600; color: var(--text-primary); margin: 0 0 4px 0; }
+        .upload-subtext { font-size: 11px; color: var(--text-secondary); margin: 0; }
+        .library-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; min-height: 100px; }
+        .library-item {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: grab;
+            transition: all 0.2s ease;
+            background-color: var(--container-bg);
+        }
+        .library-item:hover { border-color: var(--accent-blue); background-color: #3f4044; }
+        .library-item img { width: 100%; height: 80px; border-radius: 6px; object-fit: cover; }
+        
+        .action-btn {
+            width: 100%; padding: 10px 14px; border: 1px solid var(--accent-blue); border-radius: 8px; background-color: var(--accent-blue); color: #fff; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;
+        }
+        .action-btn:hover { background-color: #5a95f5; }
+        .action-btn.secondary { background: var(--container-bg); color: var(--text-primary); border-color: var(--border-color); }
+        .action-btn.secondary:hover { background-color: #3f4044; }
+        .control-group { margin-bottom: 16px; }
+        .control-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px; }
+        .slider-container { display: flex; align-items: center; gap: 10px; }
+        .slider { flex: 1; }
+        .slider-value { font-size: 12px; font-weight: 500; color: var(--text-primary); min-width: 35px; text-align: right; }
+        .color-picker-container { display: flex; align-items: center; gap: 10px; }
+        .color-picker { width: 36px; height: 36px; border: 1px solid var(--border-color); border-radius: 8px; background: none; cursor: pointer; }
+        .style-select, .text-input { width: 100%; padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--container-bg); color: var(--text-primary); font-size: 13px; }
+        .style-buttons { display: flex; gap: 6px; }
+        .style-btn { flex: 1; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--container-bg); color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease; }
+        .style-btn:hover { border-color: var(--accent-light); color: var(--accent-light); }
+        .style-btn.active { background-color: var(--accent-light); color: #000; }
+
+        /* Loading Overlay */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            flex-direction: column;
+        }
+        #loading-overlay p {
+            margin-top: 16px;
+            font-size: 16px;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--accent-blue);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Sticker Customizer Section */
+        #sticker-customizer-section {
+            --bg: #0b0b10; --panel: #141420; --muted: #8b90a6; --text: #e9ecf3; --accent: #7dd3fc; --accent-2: #c4b5fd; --error: #ef4444; --ok: #10b981; --ring: rgba(125, 211, 252, 0.25);
+            background: var(--bg-dark);
+            border-top: 1px solid #3a3a3a;
+            padding: 16px;
+        }
+        .customizer-content { display: grid; grid-template-columns: 1fr 1.5fr 1fr 1fr; gap: 24px; padding: 12px; }
+        .product-column h3, .material-column h3, .size-column h3, .quantity-column h3, .shape-options .shape-title, .material-column h4 { font-size: 14px; font-weight: 600; color: #c9d2ea; margin: 0 0 12px 0; display: block; }
+        .product-select, .finish-select { width: 100%; padding: 10px 12px; border-radius: 8px; color: var(--text); background: var(--container-bg); border: 1px solid var(--border-color); outline: none; transition: 0.2s; font-size: 13px; cursor: pointer; }
+        .product-select:focus, .finish-select:focus { box-shadow: 0 0 0 4px var(--ring); border-color: var(--accent); }
+        .shape-options { margin-top: 20px; }
+        .shape-grid { display: flex; flex-direction: column; gap: 8px; }
+        .shape-option { display: flex; align-items: center; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; background: var(--container-bg); }
+        .shape-option:hover { background: #3f4044; }
+        .shape-option.selected { background: var(--accent-blue); color: #fff; }
+        .shape-option input[type="radio"] { display: none; }
+        .shape-option label { font-size: 13px; color: inherit; cursor: pointer; font-weight: 500; }
+        .material-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .material-option { display: flex; flex-direction: column; align-items: center; padding: 12px 8px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; background: var(--container-bg); text-align: center; }
+        .material-option:hover { background: #3f4044; }
+        .material-option.selected { background: var(--accent-blue); color: #fff; }
+        .material-icon { width: 36px; height: 36px; border-radius: 50%; margin-bottom: 8px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .material-vinyl { background: linear-gradient(135deg, #f5f5f5, #e0e0e0); }
+        .material-holographic { background: linear-gradient(135deg, #ff6b9d, #c4b5fd, #60a5fa, #34d399); }
+        .material-transparent { background: linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%); background-size: 8px 8px; background-position: 0 0, 0 4px, 4px -4px, -4px 0px; background-color: #111; }
+        .material-glitter { background: linear-gradient(135deg, #ffd700, #ffed4e, #fbbf24); }
+        .material-mirror { background: linear-gradient(135deg, #e5e7eb, #d1d5db, #9ca3af); }
+        .material-pixie { background: linear-gradient(135deg, #f3e8ff, #e9d5ff, #c4b5fd); }
+        .material-label { font-size: 12px; font-weight: 500; color: var(--text); }
+        .material-option.selected .material-label { color: #fff; }
+        .material-column h4 { margin-top: 20px; }
+        .size-quantity-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .size-quantity-table td { padding: 8px 10px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background-color 0.2s ease; }
+        .size-quantity-table tr:hover td { background-color: #3f4044; }
+        .size-quantity-table tr.selected td { background: var(--accent-blue); color: #fff; font-weight: 600; }
+        .quantity-column .size-quantity-table td:nth-child(2) { font-weight: 600; color: var(--text); }
+        .quantity-column .size-quantity-table tr.selected td:nth-child(2) { color: #fff; }
+        .quantity-column .size-quantity-table td:nth-child(3) { font-weight: 600; color: var(--ok); }
+        .quantity-column .size-quantity-table tr.selected td:nth-child(3) { color: #fff; }
+        .custom-row td { color: var(--muted); font-style: italic; }
+        
+        .contextual-toolbar {
+            position: absolute;
+            display: none;
+            background-color: var(--sidebar-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            padding: 4px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .contextual-toolbar button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .contextual-toolbar button svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+        .contextual-toolbar button:hover {
+            background-color: var(--container-bg);
+            color: var(--text-primary);
+        }
+        .contextual-toolbar button.active {
+            background-color: var(--accent-blue);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay">
+        <div class="loader"></div>
+        <p id="loading-message">Processing image...</p>
+    </div>
+
+    <div class="unified-editor">
+        <div class="editor-container">
+            <!-- LEFT SIDEBAR -->
+            <aside class="sidebar left-sidebar">
+                <header class="sidebar-header">
+                    <div class="project-title">
+                        <div class="logo-placeholder"></div>
+                        <h1>Sticker Editor</h1>
+                    </div>
+                    <p>Create Your Own Stickers</p>
+                </header>
+                <div class="product-selector">
+                    <h3>Product</h3>
+                    <select id="product-type" class="style-select">
+                        <option value="die-cut">Die Cut Stickers</option>
+                        <option value="sticker-sheet">Sticker Sheets</option>
+                        <option value="bumper">Bumper Stickers</option>
+                        <option value="decal">Text Decals</option>
+                    </select>
+                </div>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <main class="main-content">
+                <div id="contextual-toolbar" class="contextual-toolbar"></div>
+                <div class="top-toolbar">
+                    <button id="select-tool" title="Select"><svg viewBox="0 0 24 24"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"></path></svg></button>
+                    <button id="pan-tool" title="Pan"><svg viewBox="0 0 24 24"><path d="M18 11.5V9a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v1.4M14 10V8a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2m-4 0V9a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v5m0 1v0a2 2 0 0 0-2 2v0a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6a3 3 0 0 0-3-3H9z"></path></svg></button>
+                    <span class="divider"></span>
+                    <button id="undo" title="Undo"><svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"></path></svg></button>
+                    <button id="redo" title="Redo"><svg viewBox="0 0 24 24"><path d="M11.5 8c2.65 0 5.05.99 6.9 2.6L22 7v9h-9l3.62-3.62c-1.39-1.16-3.16-1.88-5.12-1.88-3.54 0-6.55 2.31-7.6 5.5l-2.37-.78C2.92 11.03 6.85 8 11.5 8z"></path></svg></button>
+                    <button id="delete-selected" title="Delete"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></button>
+                    <span class="divider"></span>
+                     <button id="zoom-in" title="Zoom In"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zM10 7H9v2H7v1h2v2h1v-2h2V9h-2V7z"></path></svg></button>
+                    <button id="zoom-out" title="Zoom Out"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zM7 9h5v1H7z"></path></svg></button>
+                </div>
+                <div class="canvas-container-outer">
+                    <canvas id="image-canvas"></canvas>
+                </div>
+                 <div id="status-bar" style="position: absolute; bottom: 20px; color: var(--text-secondary); font-size: 12px;">
+                    <span id="canvas-info">Ready</span> | Zoom: <span id="zoom-level">100%</span>
+                </div>
+            </main>
+            
+            <!-- RIGHT SIDEBAR -->
+            <aside class="sidebar right-sidebar">
+                <header class="sidebar-header right">
+                    <div class="user-avatars">
+                        <img src="https://i.pravatar.cc/32?u=a" alt="User 1" onerror="this.onerror=null;this.src='https://placehold.co/32x32/EAEAEA/1E1F22?text=A';">
+                        <img src="https://i.pravatar.cc/32?u=b" alt="User 2" onerror="this.onerror=null;this.src='https://placehold.co/32x32/EAEAEA/1E1F22?text=B';">
+                    </div>
+                    <button class="share-btn">Share</button>
+                </header>
+                <div class="editor-tabs">
+                      <!-- Tab Headers -->
+                      <div class="tab-header">
+                        <button class="editor-tab-btn active" data-tab="upload">Upload</button>
+                        <button class="editor-tab-btn" data-tab="edit">Edit</button>
+                        <button class="editor-tab-btn" data-tab="text">Text</button>
+                      </div>
+
+                      <!-- Tab Content -->
+                      <!-- Upload Tab -->
+                      <div class="tab-content active" id="tab-upload-content">
+                        <div class="tab-section">
+                          <h4 class="section-title">Upload Image</h4>
+                          <div class="upload-area" id="upload-drop-zone">
+                            <div class="upload-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+                            <p class="upload-text">Drag & drop or click to upload</p>
+                            <p class="upload-subtext">PNG, JPG, SVG up to 10MB</p>
+                            <input type="file" id="file-upload" accept="image/*" style="display: none"/>
+                          </div>
+                        </div>
+                        <div class="tab-section">
+                          <h4 class="section-title">Your Image Library</h4>
+                          <div class="library-grid" id="user-library-grid">
+                            <!-- User uploaded images will appear here -->
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Edit Tab -->
+                      <div class="tab-content" id="tab-edit-content">
+                        <div class="tab-section">
+                          <h4 class="section-title">AI Tools</h4>
+                          <button id="remove-bg-btn" class="action-btn">Remove Background</button>
+                          <button id="portrait-btn" class="action-btn">Create Portrait</button>
+                          <button id="reset-image-btn" class="action-btn secondary">Reset</button>
+                        </div>
+                        <div class="tab-section">
+                          <h4 class="section-title">Border & Outline</h4>
+                          <div class="control-group">
+                            <label class="control-label">Border Thickness</label>
+                            <div class="slider-container"><input type="range" id="border-thickness" min="0" max="20" value="0" class="slider"/><span class="slider-value">0px</span></div>
+                          </div>
+                          <div class="control-group">
+                            <label class="control-label">Border Color</label>
+                            <div class="color-picker-container"><input type="color" id="border-color" value="#7dd3fc" class="color-picker"/></div>
+                          </div>
+                          <div class="control-group">
+                            <label class="control-label">Border Style</label>
+                            <select id="border-style" class="style-select"><option value="solid">Solid</option><option value="dashed">Dashed</option><option value="dotted">Dotted</option></select>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Text Tab -->
+                      <div class="tab-content" id="tab-text-content">
+                        <div class="tab-section">
+                          <h4 class="section-title">Add Text</h4>
+                          <div class="control-group"><textarea id="text-input" class="text-input" placeholder="Enter your text..." rows="2"></textarea><button id="add-text-btn" class="action-btn">Add Text</button></div>
+                          <div class="control-group"><label class="control-label">Font Family</label>
+                            <select id="font-family" class="style-select">
+                                <option value="Arial" style="font-family: Arial;">Arial</option>
+                                <option value="Roboto" style="font-family: 'Roboto', sans-serif;">Roboto</option>
+                                <option value="Lato" style="font-family: 'Lato', sans-serif;">Lato</option>
+                                <option value="Montserrat" style="font-family: 'Montserrat', sans-serif;">Montserrat</option>
+                                <option value="Oswald" style="font-family: 'Oswald', sans-serif;">Oswald</option>
+                                <option value="Lobster" style="font-family: 'Lobster', cursive;">Lobster</option>
+                                <option value="Pacifico" style="font-family: 'Pacifico', cursive;">Pacifico</option>
+                                <option value="Caveat" style="font-family: 'Caveat', cursive;">Caveat</option>
+                            </select>
+                          </div>
+                          <div class="control-group"><label class="control-label">Font Size</label><div class="slider-container"><input type="range" id="font-size" min="8" max="150" value="40" class="slider"/><span class="slider-value">40px</span></div></div>
+                          <div class="control-group"><label class="control-label">Text Color</label><div class="color-picker-container"><input type="color" id="text-color" value="#ffffff" class="color-picker"/></div></div>
+                          <div class="control-group"><label class="control-label">Text Style</label><div class="style-buttons"><button class="style-btn" data-style="bold">B</button><button class="style-btn" data-style="italic">I</button><button class="style-btn" data-style="underline">U</button></div></div>
+                          <div class="control-group"><label class="control-label">Text Alignment</label><div class="style-buttons"><button class="style-btn alignment-btn active" data-align="left">L</button><button class="style-btn alignment-btn" data-align="center">C</button><button class="style-btn alignment-btn" data-align="right">R</button></div></div>
+                        </div>
+                      </div>
+                </div>
+            </aside>
+        </div>
+        
+        <!-- Sticker Customizer Section -->
+        <div id="sticker-customizer-section">
+            <div class="customizer-content">
+                <div class="product-column">
+                  <h3>Product</h3>
+                  <select class="product-select" id="product-select">
+                    <option value="die-cut-sticker">Die Cut Sticker</option>
+                    <option value="circle-sticker">Circle Sticker</option>
+                    <option value="square-sticker">Square Sticker</option>
+                  </select>
+                  <div class="shape-options">
+                    <h4 class="shape-title">Shape</h4>
+                    <div class="shape-grid">
+                      <div class="shape-option selected"><input type="radio" name="shape" value="contour-cut" id="contour-cut" checked/><label for="contour-cut">Contour Cut</label></div>
+                      <div class="shape-option"><input type="radio" name="shape" value="square" id="square"/><label for="square">Square</label></div>
+                      <div class="shape-option"><input type="radio" name="shape" value="circle" id="circle"/><label for="circle">Circle</label></div>
+                      <div class="shape-option"><input type="radio" name="shape" value="rounded-corners" id="rounded-corners"/><label for="rounded-corners">Rounded Corners</label></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="material-column">
+                  <h3>Material</h3>
+                  <div class="material-grid">
+                    <div class="material-option selected" data-material="vinyl"><div class="material-icon material-vinyl"></div><div class="material-label">Vinyl</div></div>
+                    <div class="material-option" data-material="holographic"><div class="material-icon material-holographic"></div><div class="material-label">Holographic</div></div>
+                    <div class="material-option" data-material="transparent"><div class="material-icon material-transparent"></div><div class="material-label">Transparent</div></div>
+                    <div class="material-option" data-material="glitter"><div class="material-icon material-glitter"></div><div class="material-label">Glitter</div></div>
+                    <div class="material-option" data-material="mirror"><div class="material-icon material-mirror"></div><div class="material-label">Mirror</div></div>
+                    <div class="material-option" data-material="pixie"><div class="material-icon material-pixie"></div><div class="material-label">Pixie Dust</div></div>
+                  </div>
+                  <h4 style="margin-top: 24px">Finish</h4>
+                  <select class="finish-select" id="finish-select"><option value="glossy">Glossy</option><option value="matte">Matte</option><option value="satin">Satin</option></select>
+                </div>
+                <div class="size-column">
+                  <h3>Size, inch (W×H)</h3>
+                  <table class="size-quantity-table">
+                    <tbody>
+                      <tr data-size="2x2"><td>2" × 2"</td></tr>
+                      <tr data-size="3x3" class="selected"><td>3" × 3"</td></tr>
+                      <tr data-size="4x4"><td>4" × 4"</td></tr>
+                      <tr data-size="5x5"><td>5" × 5"</td></tr>
+                      <tr data-size="custom" class="custom-row"><td>Custom size</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="quantity-column">
+                  <h3>Quantity</h3>
+                  <table class="size-quantity-table">
+                    <tbody>
+                      <tr data-quantity="55" data-price="26"><td>55 pcs</td><td>$26</td><td></td></tr>
+                      <tr data-quantity="100" data-price="47" class="selected"><td>100 pcs</td><td>$47</td><td></td></tr>
+                      <tr data-quantity="200" data-price="64"><td>200 pcs</td><td>$64</td><td>-32%</td></tr>
+                      <tr data-quantity="500" data-price="114"><td>500 pcs</td><td>$114</td><td>-52%</td></tr>
+                      <tr data-quantity="custom" class="custom-row"><td>Custom quantity</td><td></td><td></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <canvas id="bg-canvas" style="display: none;"></canvas>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const loadingMessage = document.getElementById('loading-message');
+
+            function showLoader(message) {
+                loadingMessage.textContent = message;
+                loadingOverlay.style.display = 'flex';
+            }
+
+            function hideLoader() {
+                loadingOverlay.style.display = 'none';
+            }
+
+            // --- U2Net Model Handlers ---
+            class U2NetModel {
+                constructor(modelPath) {
+                    this.session = null;
+                    this.modelPath = modelPath;
+                }
+
+                async init() {
+                    if (this.session) return;
+                    try {
+                        this.session = new onnx.InferenceSession({ backendHint: 'webgl' });
+                        await this.session.loadModel(this.modelPath);
+                    } catch (e) {
+                        console.error(`Failed to load U2Net model from ${this.modelPath}.`, e);
+                        throw new Error("Could not load the AI model. Please check your network connection and try again.");
+                    }
+                }
+
+                preprocess(imageElement) {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 512;
+                    canvas.height = 512;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(imageElement, 0, 0, 512, 512);
+                    const imageData = ctx.getImageData(0, 0, 512, 512);
+                    const { data } = imageData;
+                    const input = new Float32Array(1 * 3 * 512 * 512);
+
+                    const mean = [0.485, 0.456, 0.406];
+                    const std = [0.229, 0.224, 0.225];
+
+                    for (let i = 0; i < data.length; i += 4) {
+                        const j = i / 4;
+                        const r = data[i] / 255;
+                        const g = data[i + 1] / 255;
+                        const b = data[i + 2] / 255;
+
+                        input[j] = (r - mean[0]) / std[0];
+                        input[j + 512 * 512] = (g - mean[1]) / std[1];
+                        input[j + 2 * 512 * 512] = (b - mean[2]) / std[2];
+                    }
+                    return new onnx.Tensor(input, 'float32', [1, 3, 512, 512]);
+                }
+
+                async run(imageElement) {
+                    if (!this.session) {
+                        showLoader('Loading AI Model...');
+                        await this.init();
+                    }
+                    if (!this.session) return null;
+
+                    showLoader('Analyzing Image...');
+                    const tensor = this.preprocess(imageElement);
+                    const outputMap = await this.session.run([tensor]);
+                    return outputMap.values().next().value;
+                }
+            }
+
+            const bgRemoverModel = new U2NetModel('https://huggingface.co/briaai/RMBG-1.4/resolve/main/onnx/u2netp.onnx');
+            const portraitModel = new U2NetModel('https://huggingface.co/xuebin/u-2-net-portrait/resolve/main/u2net_portrait.onnx');
+
+            // --- Fabric.js Image Editor Logic ---
+            class ImageEditor {
+                 constructor() {
+                    this.canvasContainer = document.querySelector('.canvas-container-outer');
+                    this.canvas = new fabric.Canvas('image-canvas', {
+                        width: this.canvasContainer.clientWidth,
+                        height: this.canvasContainer.clientHeight,
+                        backgroundColor: null,
+                        preserveObjectStacking: true,
+                    });
+                    this.history = [];
+                    this.historyIndex = -1;
+                    this.maxHistory = 50;
+                    this.currentTool = "select";
+                    this.isPanning = false;
+                    this.lastPanPoint = null;
+                    this.contextualToolbar = document.getElementById('contextual-toolbar');
+
+                    this.init();
+                    
+                    new ResizeObserver(() => this.resizeCanvas()).observe(this.canvasContainer);
+                }
+
+                resizeCanvas() {
+                    this.canvas.setWidth(this.canvasContainer.clientWidth);
+                    this.canvas.setHeight(this.canvasContainer.clientHeight);
+                    this.canvas.renderAll();
+                }
+
+                init() {
+                    this.setupEventListeners();
+                    this.setupCanvasEvents();
+                    this.updateStatus("Canvas initialized. Upload an image to get started.");
+                    this.updateZoomLevel();
+                    this.saveState();
+                    this.setTool("select");
+                }
+
+                setupEventListeners() {
+                    document.getElementById("select-tool").addEventListener("click", () => this.setTool("select"));
+                    document.getElementById("pan-tool").addEventListener("click", () => this.setTool("pan"));
+                    document.getElementById("zoom-in").addEventListener("click", () => this.zoomCanvas(1.2));
+                    document.getElementById("zoom-out").addEventListener("click", () => this.zoomCanvas(0.8));
+                    document.getElementById("delete-selected").addEventListener("click", () => this.deleteSelected());
+                    document.getElementById("undo").addEventListener("click", () => this.undo());
+                    document.getElementById("redo").addEventListener("click", () => this.redo());
+                    document.getElementById("remove-bg-btn").addEventListener("click", () => this.removeBackground());
+                    document.getElementById("portrait-btn").addEventListener("click", () => this.createPortrait());
+                    document.getElementById("add-text-btn").addEventListener("click", () => this.addText());
+
+                    // Text controls
+                    document.getElementById('font-family').addEventListener('change', (e) => this.updateText('fontFamily', e.target.value));
+                    document.getElementById('font-size').addEventListener('input', (e) => {
+                        this.updateText('fontSize', parseInt(e.target.value));
+                        e.target.nextElementSibling.textContent = `${e.target.value}px`;
+                    });
+                    document.getElementById('text-color').addEventListener('input', (e) => this.updateText('fill', e.target.value));
+                    document.querySelectorAll('.style-btn[data-style]').forEach(btn => btn.addEventListener('click', (e) => this.toggleTextStyle(e.currentTarget.dataset.style)));
+                    document.querySelectorAll('.alignment-btn').forEach(btn => btn.addEventListener('click', (e) => this.updateText('textAlign', e.currentTarget.dataset.align)));
+                }
+
+                setupCanvasEvents() {
+                    this.canvas.on({
+                        'object:modified': (e) => {
+                            if (e.target && e.target.id === 'sticker-sheet-template') {
+                                e.target.sendToBack();
+                            }
+                            this.saveState();
+                        },
+                        'selection:created': (e) => this.showContextualToolbar(e.target),
+                        'selection:updated': (e) => this.showContextualToolbar(e.target),
+                        'selection:cleared': () => this.hideContextualToolbar(),
+                        'object:moving': (e) => this.positionContextualToolbar(e.target),
+                        'object:scaling': (e) => this.positionContextualToolbar(e.target),
+                        'object:rotating': (e) => this.positionContextualToolbar(e.target),
+                        'mouse:down': (opt) => {
+                            if (this.currentTool === "pan") {
+                                this.isPanning = true;
+                                this.canvas.selection = false;
+                                this.lastPanPoint = new fabric.Point(opt.e.clientX, opt.e.clientY);
+                                this.canvas.setCursor("grabbing");
+                            }
+                        },
+                        'mouse:move': (opt) => {
+                            if (this.isPanning && this.lastPanPoint) {
+                                const vpt = this.canvas.viewportTransform;
+                                vpt[4] += opt.e.clientX - this.lastPanPoint.x;
+                                vpt[5] += opt.e.clientY - this.lastPanPoint.y;
+                                this.canvas.requestRenderAll();
+                                this.lastPanPoint = new fabric.Point(opt.e.clientX, opt.e.clientY);
+                            }
+                        },
+                        'mouse:up': () => {
+                            if (this.isPanning) {
+                                this.isPanning = false;
+                                this.canvas.selection = true;
+                                this.lastPanPoint = null;
+                                this.canvas.setCursor("default");
+                            }
+                        },
+                        'mouse:wheel': (opt) => {
+                            const delta = opt.e.deltaY;
+                            const zoom = this.canvas.getZoom();
+                            const newZoom = zoom * (delta > 0 ? 0.9 : 1.1);
+                            if (newZoom >= 0.1 && newZoom <= 10) {
+                                this.canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, newZoom);
+                                this.updateZoomLevel();
+                            }
+                            opt.e.preventDefault();
+                            opt.e.stopPropagation();
+                        }
+                    });
+                }
+                
+                async applyModel(model, postprocessor) {
+                    const activeObject = this.canvas.getActiveObject();
+                    if (!activeObject || activeObject.type !== 'image') {
+                        alert('Please select an image first.');
+                        return;
+                    }
+
+                    try {
+                        const outputTensor = await model.run(activeObject.getElement());
+                        if (!outputTensor) return; // Error handled in model class
+
+                        showLoader('Generating new image...');
+                        const resultDataUrl = postprocessor(outputTensor, activeObject.getElement());
+
+                        fabric.Image.fromURL(resultDataUrl, (newImg) => {
+                            newImg.set({
+                                left: activeObject.left, top: activeObject.top, angle: activeObject.angle,
+                                scaleX: activeObject.scaleX, scaleY: activeObject.scaleY,
+                                originX: 'center', originY: 'center',
+                            });
+                            this.canvas.remove(activeObject);
+                            this.canvas.add(newImg).setActiveObject(newImg).renderAll();
+                            this.saveState();
+                        }, { crossOrigin: 'anonymous' });
+
+                    } catch (e) {
+                        console.error("AI model processing failed:", e);
+                        alert(`An error occurred: ${e.message}`);
+                    } finally {
+                        hideLoader();
+                    }
+                }
+
+                removeBackground() {
+                    this.applyModel(bgRemoverModel, (tensor, element) => {
+                        const mask = tensor.data;
+                        const canvas = document.createElement('canvas');
+                        canvas.width = element.naturalWidth;
+                        canvas.height = element.naturalHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(element, 0, 0);
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        
+                        // Create and scale mask
+                        const maskCanvas = document.createElement('canvas');
+                        maskCanvas.width = 512; maskCanvas.height = 512;
+                        const maskCtx = maskCanvas.getContext('2d');
+                        const maskImageData = maskCtx.createImageData(512, 512);
+                        for (let i = 0; i < mask.length; i++) {
+                            const value = mask[i] * 255;
+                            maskImageData.data[i * 4 + 3] = value;
+                        }
+                        maskCtx.putImageData(maskImageData, 0, 0);
+                        
+                        ctx.globalCompositeOperation = 'destination-in';
+                        ctx.drawImage(maskCanvas, 0, 0, canvas.width, canvas.height);
+                        
+                        return canvas.toDataURL();
+                    });
+                }
+
+                createPortrait() {
+                    this.applyModel(portraitModel, (tensor, element) => {
+                        const portrait = tensor.data;
+                        const canvas = document.createElement('canvas');
+                        canvas.width = 512; canvas.height = 512;
+                        const ctx = canvas.getContext('2d');
+                        const imageData = ctx.createImageData(512, 512);
+                        for (let i = 0; i < portrait.length; i++) {
+                            const value = (1 - portrait[i]) * 255;
+                            imageData.data[i * 4] = value;
+                            imageData.data[i * 4 + 1] = value;
+                            imageData.data[i * 4 + 2] = value;
+                            imageData.data[i * 4 + 3] = 255;
+                        }
+                        ctx.putImageData(imageData, 0, 0);
+                        return canvas.toDataURL();
+                    });
+                }
+
+                handleFileUpload(file) {
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                       const imageUrl = e.target.result;
+                       // Add to library
+                       const libraryGrid = document.getElementById('user-library-grid');
+                       const libraryItem = document.createElement('div');
+                       libraryItem.className = 'library-item';
+                       libraryItem.draggable = true;
+                       libraryItem.innerHTML = `<img src="${imageUrl}" alt="User Upload">`;
+                       libraryItem.addEventListener('dragstart', (event) => {
+                           event.dataTransfer.setData('text/plain', imageUrl);
+                       });
+                       libraryGrid.appendChild(libraryItem);
+                    };
+                    reader.readAsDataURL(file);
+                }
+
+                setTool(tool) {
+                    this.currentTool = tool;
+                    document.querySelectorAll('.top-toolbar button').forEach(btn => btn.style.backgroundColor = 'transparent');
+                    document.getElementById(`${tool}-tool`).style.backgroundColor = 'var(--container-bg)';
+
+                    if (tool === "select") {
+                        this.canvas.selection = true;
+                        this.canvas.forEachObject(o => o.selectable = o.evented = true);
+                        this.canvas.setCursor("default");
+                    } else if (tool === "pan") {
+                        this.canvas.selection = false;
+                        this.canvas.forEachObject(o => o.selectable = o.evented = false);
+                        this.canvas.setCursor("grab");
+                    }
+                }
+
+                zoomCanvas(factor) {
+                    const newZoom = this.canvas.getZoom() * factor;
+                    if (newZoom >= 0.1 && newZoom <= 10) {
+                        this.canvas.setZoom(newZoom);
+                        this.updateZoomLevel();
+                    }
+                }
+
+                deleteSelected() {
+                    this.canvas.getActiveObjects().forEach(obj => this.canvas.remove(obj));
+                    this.canvas.discardActiveObject().renderAll();
+                    this.saveState();
+                }
+
+                saveState() {
+                    this.history = this.history.slice(0, this.historyIndex + 1);
+                    this.history.push(JSON.stringify(this.canvas.toJSON()));
+                    this.historyIndex++;
+                    this.updateHistoryButtons();
+                }
+
+                loadState(state) {
+                    this.canvas.loadFromJSON(state, this.canvas.renderAll.bind(this.canvas));
+                }
+
+                undo() {
+                    if (this.historyIndex > 0) {
+                        this.historyIndex--;
+                        this.loadState(this.history[this.historyIndex]);
+                        this.updateHistoryButtons();
+                    }
+                }
+
+                redo() {
+                    if (this.historyIndex < this.history.length - 1) {
+                        this.historyIndex++;
+                        this.loadState(this.history[this.historyIndex]);
+                        this.updateHistoryButtons();
+                    }
+                }
+
+                updateHistoryButtons() {
+                    document.getElementById("undo").disabled = this.historyIndex <= 0;
+                    document.getElementById("redo").disabled = this.historyIndex >= this.history.length - 1;
+                }
+
+                updateStatus(message) { document.getElementById("canvas-info").textContent = message; }
+                updateZoomLevel() { document.getElementById("zoom-level").textContent = `${Math.round(this.canvas.getZoom() * 100)}%`; }
+                
+                // Text Functions
+                addText() {
+                    const textInput = document.getElementById('text-input');
+                    const text = textInput.value.trim();
+                    if (!text) return;
+
+                    const textObj = new fabric.Textbox(text, {
+                        left: this.canvas.width / 2,
+                        top: this.canvas.height / 2,
+                        width: 250,
+                        fontSize: 40,
+                        fontFamily: 'Arial',
+                        fill: '#ffffff',
+                        textAlign: 'center',
+                        originX: 'center',
+                        originY: 'center',
+                    });
+                    this.canvas.add(textObj).setActiveObject(textObj).renderAll();
+                    textInput.value = '';
+                    this.saveState();
+                }
+
+                updateText(prop, value) {
+                    const activeObject = this.canvas.getActiveObject();
+                    if (activeObject && activeObject.type.includes('text')) {
+                        activeObject.set(prop, value);
+                        this.canvas.renderAll();
+                        this.saveState();
+                    }
+                }
+
+                toggleTextStyle(style) {
+                    const activeObject = this.canvas.getActiveObject();
+                    if (activeObject && activeObject.type.includes('text')) {
+                        let prop, trueVal, falseVal;
+                        if (style === 'bold') {
+                            prop = 'fontWeight';
+                            trueVal = 'bold';
+                            falseVal = 'normal';
+                        } else if (style === 'italic') {
+                            prop = 'fontStyle';
+                            trueVal = 'italic';
+                            falseVal = 'normal';
+                        } else if (style === 'underline') {
+                            prop = 'underline';
+                            trueVal = true;
+                            falseVal = false;
+                        }
+                        const currentVal = activeObject.get(prop);
+                        activeObject.set(prop, currentVal === trueVal ? falseVal : trueVal);
+                        this.canvas.renderAll();
+                        this.updateControls(activeObject);
+                        this.saveState();
+                    }
+                }
+                
+                updateControls(obj) {
+                    if (obj && obj.type.includes('text')) {
+                        document.getElementById('font-family').value = obj.fontFamily;
+                        document.getElementById('font-size').value = obj.fontSize;
+                        document.getElementById('text-color').value = obj.fill;
+                        document.querySelector('.style-btn[data-style="bold"]').classList.toggle('active', obj.fontWeight === 'bold');
+                        document.querySelector('.style-btn[data-style="italic"]').classList.toggle('active', obj.fontStyle === 'italic');
+                        document.querySelector('.style-btn[data-style="underline"]').classList.toggle('active', obj.underline);
+                        document.querySelectorAll('.alignment-btn').forEach(btn => btn.classList.remove('active'));
+                        document.querySelector(`.alignment-btn[data-align="${obj.textAlign}"]`).classList.add('active');
+                    }
+                }
+
+                applyShape(shape) {
+                    const activeObject = this.canvas.getActiveObject();
+                    if (!activeObject || activeObject.type !== 'image') {
+                        alert('Please select an image to apply a shape.');
+                        return;
+                    }
+
+                    let clipPath = null;
+                    const width = activeObject.width;
+                    const height = activeObject.height;
+
+                    switch (shape) {
+                        case 'circle':
+                            clipPath = new fabric.Circle({
+                                radius: Math.min(width, height) / 2,
+                                originX: 'center',
+                                originY: 'center'
+                            });
+                            break;
+                        case 'square':
+                            const size = Math.min(width, height);
+                            clipPath = new fabric.Rect({
+                                width: size,
+                                height: size,
+                                originX: 'center',
+                                originY: 'center'
+                            });
+                            break;
+                        case 'rounded-corners':
+                            const cornerRadius = Math.min(width, height) * 0.1;
+                            clipPath = new fabric.Rect({
+                                width: width,
+                                height: height,
+                                rx: cornerRadius,
+                                ry: cornerRadius,
+                                originX: 'center',
+                                originY: 'center'
+                            });
+                            break;
+                        case 'contour-cut':
+                        default:
+                            clipPath = null;
+                            break;
+                    }
+                    activeObject.set('clipPath', clipPath);
+                    this.canvas.renderAll();
+                    this.saveState();
+                }
+
+                // Contextual Toolbar Functions
+                showContextualToolbar(target) {
+                    if (target) {
+                        this.contextualToolbar.style.display = 'flex';
+                        this.positionContextualToolbar(target);
+                        this.updateToolbarContent(target);
+                    }
+                }
+
+                hideContextualToolbar() {
+                    this.contextualToolbar.style.display = 'none';
+                }
+
+                positionContextualToolbar(target) {
+                    if (!target) return;
+                    const boundingBox = target.getBoundingRect();
+                    const top = boundingBox.top;
+                    const left = boundingBox.left + boundingBox.width;
+
+                    this.contextualToolbar.style.top = `${top}px`;
+                    this.contextualToolbar.style.left = `${left + 10}px`;
+                }
+                
+                updateToolbarContent(target){
+                    this.contextualToolbar.innerHTML = ''; // Clear existing buttons
+                    const lockBtn = document.createElement('button');
+                    lockBtn.id = 'lock-btn';
+                    lockBtn.title = 'Lock/Unlock';
+                    lockBtn.onclick = () => this.toggleLock();
+                    this.contextualToolbar.appendChild(lockBtn);
+                    this.updateLockIcon(target);
+                }
+
+                toggleLock() {
+                    const activeObject = this.canvas.getActiveObject();
+                    if (!activeObject) return;
+
+                    activeObject.customLocked = !activeObject.customLocked;
+                    const isLocked = activeObject.customLocked;
+
+                    activeObject.set({
+                        lockMovementX: isLocked,
+                        lockMovementY: isLocked,
+                        lockScalingX: isLocked,
+                        lockScalingY: isLocked,
+                        lockRotation: isLocked,
+                        hasControls: !isLocked,
+                        hasBorders: !isLocked,
+                    });
+
+                    this.updateLockIcon(activeObject);
+                    this.canvas.renderAll();
+                }
+
+                updateLockIcon(target) {
+                    const lockBtn = document.getElementById('lock-btn');
+                    if(!lockBtn) return;
+                    
+                    if (target.customLocked) {
+                        lockBtn.classList.add('active');
+                        lockBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"></path></svg>`;
+                    } else {
+                        lockBtn.classList.remove('active');
+                        lockBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h2c0-1.66 1.34-3 3-3s3 1.34 3 3v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path></svg>`;
+                    }
+                }
+            }
+
+            const editor = new ImageEditor();
+            window.imageEditorInstance = editor;
+
+            function initializeTabSystem() {
+                const tabButtons = document.querySelectorAll('.editor-tab-btn');
+                const tabContents = document.querySelectorAll('.tab-content');
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const targetTab = button.dataset.tab;
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        tabContents.forEach(content => content.classList.remove('active'));
+                        button.classList.add('active');
+                        document.getElementById(`tab-${targetTab}-content`).classList.add('active');
+                    });
+                });
+            }
+            initializeTabSystem();
+            
+            const uploadArea = document.getElementById('upload-drop-zone');
+            const fileInput = document.getElementById('file-upload');
+            uploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => editor.handleFileUpload(e.target.files[0]));
+            
+            const canvasContainer = document.querySelector('.canvas-container-outer');
+            canvasContainer.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+
+            canvasContainer.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const imageUrl = e.dataTransfer.getData('text/plain');
+                if (imageUrl) {
+                    fabric.Image.fromURL(imageUrl, (img) => {
+                        const pointer = editor.canvas.getPointer(e);
+                        img.set({
+                            left: pointer.x,
+                            top: pointer.y,
+                            originX: 'center',
+                            originY: 'center',
+                            scaleX: 0.2, // Initial scale
+                            scaleY: 0.2,
+                        });
+                        editor.canvas.add(img).renderAll();
+                        editor.saveState();
+                    }, { crossOrigin: 'anonymous' });
+                }
+            });
+
+            const removeSelected = (elements) => elements.forEach(el => el.classList.remove("selected"));
+            const shapeOptions = document.querySelectorAll("#sticker-customizer-section .shape-option");
+            shapeOptions.forEach(option => option.addEventListener("click", function () {
+                removeSelected(shapeOptions);
+                this.classList.add("selected");
+                const shapeValue = this.querySelector('input[name="shape"]').value;
+                editor.applyShape(shapeValue);
+            }));
+            const materialOptions = document.querySelectorAll("#sticker-customizer-section .material-option");
+            materialOptions.forEach(option => option.addEventListener("click", function () { removeSelected(materialOptions); this.classList.add("selected"); }));
+            const sizeRows = document.querySelectorAll("#sticker-customizer-section .size-column .size-quantity-table tr");
+            sizeRows.forEach(row => row.addEventListener("click", function () { if(this.dataset.size !== "custom") { removeSelected(sizeRows); this.classList.add("selected"); } }));
+            const quantityRows = document.querySelectorAll("#sticker-customizer-section .quantity-column .size-quantity-table tr");
+            quantityRows.forEach(row => row.addEventListener("click", function () { if(this.dataset.quantity !== "custom") { removeSelected(quantityRows); this.classList.add("selected"); } }));
+
+            // Product Dropdown Logic
+            const productTypeSelect = document.getElementById('product-type');
+            productTypeSelect.addEventListener('change', (e) => {
+                const productType = e.target.value;
+                editor.updateUIForProduct(productType);
+            });
+
+            editor.updateUIForProduct = function(productType) {
+                const customizer = document.getElementById('sticker-customizer-section');
+                if (['die-cut', 'bumper', 'decal'].includes(productType)) {
+                    customizer.style.display = 'block';
+                } else {
+                    customizer.style.display = 'none';
+                }
+
+                // Remove existing templates
+                const templateIds = ['sticker-sheet-template', 'bumper-sticker-template'];
+                this.canvas.getObjects().forEach(obj => {
+                    if (templateIds.includes(obj.id)) {
+                        this.canvas.remove(obj);
+                    }
+                });
+
+                const uploadTab = document.querySelector('.editor-tab-btn[data-tab="upload"]');
+                const editTab = document.querySelector('.editor-tab-btn[data-tab="edit"]');
+                const textTab = document.querySelector('.editor-tab-btn[data-tab="text"]');
+
+                switch(productType) {
+                    case 'sticker-sheet':
+                        uploadTab.click();
+                        const sheetWidth = this.canvas.width * 0.9;
+                        const sheetHeight = sheetWidth * (9/16);
+                        const stickerSheetTemplate = new fabric.Rect({
+                            width: sheetWidth, height: sheetHeight,
+                            fill: 'rgba(255, 255, 255, 0.05)',
+                            stroke: 'rgba(255, 255, 255, 0.3)',
+                            strokeWidth: 1,
+                            strokeDashArray: [8, 4],
+                            selectable: false, evented: false, id: 'sticker-sheet-template',
+                            left: this.canvas.width / 2, top: this.canvas.height / 2,
+                            originX: 'center', originY: 'center',
+                        });
+                        this.canvas.add(stickerSheetTemplate);
+                        stickerSheetTemplate.sendToBack();
+                        break;
+                    case 'bumper':
+                        editTab.click();
+                        const bumperWidth = this.canvas.width * 0.8;
+                        const bumperHeight = bumperWidth / 3.83; // Approx 11.5x3 ratio
+                        const bumperTemplate = new fabric.Rect({
+                            width: bumperWidth, height: bumperHeight, rx: 20, ry: 20,
+                            fill: 'rgba(255, 255, 255, 0.05)',
+                            stroke: 'rgba(255, 255, 255, 0.3)',
+                            strokeWidth: 1,
+                            strokeDashArray: [8, 4],
+                            selectable: false, evented: false, id: 'bumper-sticker-template',
+                            left: this.canvas.width / 2, top: this.canvas.height / 2,
+                            originX: 'center', originY: 'center',
+                        });
+                        this.canvas.add(bumperTemplate);
+                        bumperTemplate.sendToBack();
+                        break;
+                    case 'decal':
+                        textTab.click();
+                        break;
+                    case 'die-cut':
+                        editTab.click();
+                        break;
+                }
+                this.canvas.renderAll();
+            }
+
+        });
+    </script>
+</body>
+</html>

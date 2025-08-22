@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Complete Profile - Sticker Shuttle</title>
+  <meta name="description" content="Complete your profile to get the most out of Sticker Shuttle" />
+  <meta name="keywords" content="profile, account, settings, stickers" />
+  <meta name="author" content="Sticker Shuttle" />
+  <meta name="theme-color" content="#030140" />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="https://res.cloudinary.com/dxcnvqk6b/image/upload/v1749591675/Asset_8_mhjgsx.svg?v=2" />
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Rubik:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <!-- Firebase Authentication -->
+  <script type="module" src="../js/firebase-config.js"></script>
+  <script type="module" src="../js/auth-service.js"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #030140 0%, #1a1a4a 50%, #4c1d95 100%);
+      min-height: 100vh;
+      color: white;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+    }
+    
+    .background-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+      transform: scale(1.75);
+    }
+    
+    .video-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: -1;
+    }
+    
+    .gradient-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 25vh;
+      background: linear-gradient(180deg, #030140 0%, #030140 15%, rgba(3, 1, 64, 0.9) 35%, rgba(3, 1, 64, 0.7) 55%, rgba(3, 1, 64, 0.4) 75%, rgba(3, 1, 64, 0.2) 90%, transparent 100%);
+      z-index: 0;
+    }
+    
+    .profile-container {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 1rem;
+      padding: 2rem;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+      position: relative;
+      z-index: 10;
+    }
+    
+    .logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .logo img {
+      height: 60px;
+      width: auto;
+    }
+    
+    .welcome-text {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .welcome-text h1 {
+      font-family: 'Rubik', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #ffd713, #ffed4e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .welcome-text p {
+      color: #d1d5db;
+      font-size: 0.875rem;
+    }
+    
+    .user-info-preview {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    .user-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      overflow: hidden;
+      border: 3px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .user-avatar .initials {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #a855f7, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .user-email {
+      color: #9ca3af;
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .user-name {
+      color: white;
+      font-weight: 600;
+      font-size: 1.125rem;
+    }
+    
+    .form-section {
+      margin-bottom: 2rem;
+    }
+    
+    .section-title {
+      color: white;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      font-size: 1.125rem;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+    
+    .form-group label {
+      display: block;
+      color: #d1d5db;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 0.5rem;
+      color: white;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+    
+    .form-group input::placeholder,
+    .form-group select::placeholder {
+      color: #9ca3af;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #a855f7;
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+    }
+    
+    .form-group select option {
+      background: #1a1a4a;
+      color: white;
+    }
+    
+    .wholesale-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.75rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s;
+    }
+    
+    .wholesale-toggle:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    
+    .wholesale-info h3 {
+      color: white;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+    
+    .wholesale-info p {
+      color: #9ca3af;
+      font-size: 0.75rem;
+    }
+    
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background: #6b7280;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    
+    .toggle-switch.active {
+      background: #10b981;
+    }
+    
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+    
+    .toggle-switch.active::after {
+      transform: translateX(20px);
+    }
+    
+    .terms-checkbox {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .terms-checkbox input[type="checkbox"] {
+      width: auto;
+      margin-top: 0.25rem;
+    }
+    
+    .terms-checkbox label {
+      color: #d1d5db;
+      font-size: 0.875rem;
+      line-height: 1.4;
+    }
+    
+    .terms-checkbox a {
+      color: #a855f7;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .terms-checkbox a:hover {
+      color: #c084fc;
+    }
+    
+    .complete-profile-btn {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: linear-gradient(135deg, #ffd713, #ffed4e);
+      color: #030140;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .complete-profile-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 10px 25px rgba(255, 215, 19, 0.3);
+    }
+    
+    .complete-profile-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .skip-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #9ca3af;
+      font-size: 0.875rem;
+    }
+    
+    .skip-link a {
+      color: #a855f7;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    .skip-link a:hover {
+      color: #c084fc;
+    }
+    
+    .error-message {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+      text-align: center;
+    }
+    
+    .success-message {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #86efac;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+      text-align: center;
+    }
+    
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 640px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      .profile-container {
+        padding: 1.5rem;
+      }
+      
+      .welcome-text h1 {
+        font-size: 1.75rem;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Video -->
+  <video class="background-video" autoplay muted loop playsinline>
+    <source src="https://images-assets.nasa.gov/video/KSC-19890502-MH-NAS01-0001-Apollo_11_The_Twentieth_Year_1969_to_1989-B_0514/KSC-19890502-MH-NAS01-0001-Apollo_11_The_Twentieth_Year_1969_to_1989-B_0514~large.mp4" type="video/mp4">
+  </video>
+  
+  <!-- Video Overlay -->
+  <div class="video-overlay"></div>
+  
+  <!-- Gradient Overlay -->
+  <div class="gradient-overlay"></div>
+  
+  <!-- Main Container -->
+  <div class="container">
+    <div class="profile-container">
+      <!-- Logo -->
+      <div class="logo">
+        <img src="https://res.cloudinary.com/dxcnvqk6b/image/upload/v1749591683/White_Logo_ojmn3s.png" alt="Sticker Shuttle Logo">
+      </div>
+      
+      <!-- Welcome Text -->
+      <div class="welcome-text">
+        <h1>Complete Your Profile</h1>
+        <p>Add a few more details to get the most out of Sticker Shuttle</p>
+      </div>
+      
+      <!-- Messages -->
+      <div id="error-message" class="error-message" style="display: none;"></div>
+      <div id="success-message" class="success-message" style="display: none;"></div>
+      
+      <!-- User Info Preview -->
+      <div class="user-info-preview">
+        <div class="user-avatar" id="user-avatar">
+          <div class="initials">U</div>
+        </div>
+        <div class="user-email" id="user-email">loading@example.com</div>
+        <div class="user-name" id="user-name">Loading...</div>
+      </div>
+      
+      <!-- Profile Form -->
+      <form id="profile-form">
+        <!-- Personal Information -->
+        <div class="form-section">
+          <h3 class="section-title">Personal Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input type="text" id="firstName" name="firstName" placeholder="John" required>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" name="lastName" placeholder="Doe" required>
+            </div>
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567">
+          </div>
+        </div>
+        
+        <!-- Company Information -->
+        <div class="form-section">
+          <h3 class="section-title">Company Information</h3>
+          <div class="form-group full-width">
+            <label for="companyName">Company Name</label>
+            <input type="text" id="companyName" name="companyName" placeholder="Your Company Name" required>
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="jobTitle">Job Title</label>
+            <input type="text" id="jobTitle" name="jobTitle" placeholder="e.g., Marketing Manager, Designer">
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="industry">Industry</label>
+            <select id="industry" name="industry">
+              <option value="">Select Industry</option>
+              <option value="marketing">Marketing & Advertising</option>
+              <option value="retail">Retail & E-commerce</option>
+              <option value="automotive">Automotive</option>
+              <option value="food">Food & Beverage</option>
+              <option value="healthcare">Healthcare</option>
+              <option value="education">Education</option>
+              <option value="technology">Technology</option>
+              <option value="manufacturing">Manufacturing</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Preferences -->
+        <div class="form-section">
+          <h3 class="section-title">Preferences</h3>
+          
+          <!-- Wholesale Toggle -->
+          <div class="wholesale-toggle">
+            <div class="wholesale-info">
+              <h3>Wholesale Account</h3>
+              <p>Want to outsource your sticker orders? Get 15% off orders</p>
+            </div>
+            <div id="wholesale-toggle" class="toggle-switch"></div>
+            <input type="checkbox" id="is-wholesale" name="isWholesale" style="display: none;">
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="stickerTypes">Preferred Sticker Types</label>
+            <select id="stickerTypes" name="stickerTypes" multiple>
+              <option value="vinyl">Vinyl Stickers</option>
+              <option value="holographic">Holographic Stickers</option>
+              <option value="clear">Clear Stickers</option>
+              <option value="glitter">Glitter Stickers</option>
+              <option value="chrome">Chrome Stickers</option>
+              <option value="banners">Vinyl Banners</option>
+            </select>
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="orderFrequency">How often do you order stickers?</label>
+            <select id="orderFrequency" name="orderFrequency">
+              <option value="">Select Frequency</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="yearly">Yearly</option>
+              <option value="as-needed">As Needed</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Terms -->
+        <div class="terms-checkbox">
+          <input type="checkbox" id="agreeToTerms" name="agreeToTerms" required>
+          <label for="agreeToTerms">
+            I agree to the <a href="../terms-and-conditions">Terms of Service</a> and <a href="../privacy-policy">Privacy Policy</a>
+          </label>
+        </div>
+        
+        <!-- Complete Profile Button -->
+        <button type="submit" id="complete-profile-btn" class="complete-profile-btn">
+          <span class="btn-text">Complete Profile</span>
+          <span class="btn-spinner" style="display: none;"><i class="spinner"></i></span>
+        </button>
+      </form>
+      
+      <!-- Skip Link -->
+      <div class="skip-link">
+        <p>Want to do this later? <a href="dashboard">Skip to Dashboard</a></p>
+      </div>
+    </div>
+  </div>
+  
+  <script type="module">
+    import authService from '../js/auth-service.js';
+    
+    // DOM Elements
+    const profileForm = document.getElementById('profile-form');
+    const firstNameInput = document.getElementById('firstName');
+    const lastNameInput = document.getElementById('lastName');
+    const phoneInput = document.getElementById('phone');
+    const companyNameInput = document.getElementById('companyName');
+    const jobTitleInput = document.getElementById('jobTitle');
+    const industrySelect = document.getElementById('industry');
+    const isWholesaleInput = document.getElementById('is-wholesale');
+    const wholesaleToggle = document.getElementById('wholesale-toggle');
+    const stickerTypesSelect = document.getElementById('stickerTypes');
+    const orderFrequencySelect = document.getElementById('orderFrequency');
+    const agreeToTermsInput = document.getElementById('agreeToTerms');
+    const completeProfileBtn = document.getElementById('complete-profile-btn');
+    const errorMessage = document.getElementById('error-message');
+    const successMessage = document.getElementById('success-message');
+    const userAvatar = document.getElementById('user-avatar');
+    const userEmail = document.getElementById('user-email');
+    const userName = document.getElementById('user-name');
+    
+    // Check authentication on page load
+    authService.onAuthStateChanged((user) => {
+      if (user) {
+        // User is authenticated, load user data
+        loadUserData(user);
+        
+        // Pre-fill form with existing data if available
+        if (user.displayName) {
+          const nameParts = user.displayName.split(' ');
+          if (nameParts.length >= 2) {
+            firstNameInput.value = nameParts[0];
+            lastNameInput.value = nameParts.slice(1).join(' ');
+          }
+        }
+      } else {
+        // User is not authenticated, redirect to login
+        window.location.href = '../login';
+      }
+    });
+    
+    // Load user data
+    function loadUserData(user) {
+      // Set user avatar
+      if (user.photoURL) {
+        userAvatar.innerHTML = `<img src="${user.photoURL}" alt="User Avatar">`;
+      } else {
+        const initials = (user.displayName || user.email || 'U').charAt(0).toUpperCase();
+        userAvatar.innerHTML = `<div class="initials">${initials}</div>`;
+      }
+      
+      // Set user name and email
+      userName.textContent = user.displayName || 'User';
+      userEmail.textContent = user.email;
+    }
+    
+    // Wholesale toggle functionality
+    wholesaleToggle.addEventListener('click', () => {
+      wholesaleToggle.classList.toggle('active');
+      isWholesaleInput.checked = wholesaleToggle.classList.contains('active');
+    });
+    
+    // Show message function
+    function showMessage(type, message) {
+      // Hide existing messages
+      errorMessage.style.display = 'none';
+      successMessage.style.display = 'none';
+      
+      if (type === 'error') {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+      } else if (type === 'success') {
+        successMessage.textContent = message;
+        successMessage.style.display = 'block';
+      }
+    }
+    
+    // Set loading state
+    function setLoading(loading) {
+      if (loading) {
+        completeProfileBtn.classList.add('loading');
+        completeProfileBtn.querySelector('.btn-text').style.display = 'none';
+        completeProfileBtn.querySelector('.btn-spinner').style.display = 'inline-block';
+        completeProfileBtn.disabled = true;
+      } else {
+        completeProfileBtn.classList.remove('loading');
+        completeProfileBtn.querySelector('.btn-text').style.display = 'inline';
+        completeProfileBtn.querySelector('.btn-spinner').style.display = 'none';
+        completeProfileBtn.disabled = false;
+      }
+    }
+    
+    // Handle form submission
+    profileForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const firstName = firstNameInput.value.trim();
+      const lastName = lastNameInput.value.trim();
+      const phone = phoneInput.value.trim();
+      const companyName = companyNameInput.value.trim();
+      const jobTitle = jobTitleInput.value.trim();
+      const industry = industrySelect.value;
+      const isWholesale = isWholesaleInput.checked;
+      const stickerTypes = Array.from(stickerTypesSelect.selectedOptions).map(option => option.value);
+      const orderFrequency = orderFrequencySelect.value;
+      
+      // Validation
+      if (!firstName || !lastName || !companyName) {
+        showMessage('error', 'Please fill in all required fields');
+        return;
+      }
+      
+      if (!agreeToTermsInput.checked) {
+        showMessage('error', 'Please agree to the Terms of Service and Privacy Policy');
+        return;
+      }
+      
+      setLoading(true);
+      
+      try {
+        // Update user profile
+        const result = await authService.updateUserProfile({
+          firstName,
+          lastName,
+          phone,
+          companyName,
+          jobTitle,
+          industry,
+          isWholesale,
+          stickerTypes,
+          orderFrequency
+        });
+        
+        if (result.success) {
+          showMessage('success', 'Profile completed successfully! Redirecting to dashboard...');
+          // Redirect to dashboard
+          setTimeout(() => {
+            window.location.href = 'dashboard';
+          }, 2000);
+        } else {
+          showMessage('error', result.error);
+        }
+      } catch (error) {
+        showMessage('error', 'An unexpected error occurred. Please try again.');
+        console.error('Profile update error:', error);
+      } finally {
+        setLoading(false);
+      }
+    });
+    
+    // Clear messages when user starts typing
+    [firstNameInput, lastNameInput, phoneInput, companyNameInput, jobTitleInput].forEach(input => {
+      input.addEventListener('input', () => {
+        errorMessage.style.display = 'none';
+        successMessage.style.display = 'none';
+      });
+    });
+    
+    // Handle select changes
+    [industrySelect, stickerTypesSelect, orderFrequencySelect].forEach(select => {
+      select.addEventListener('change', () => {
+        errorMessage.style.display = 'none';
+        successMessage.style.display = 'none';
+      });
+    });
+  </script>
+</body>
+</html>
+
+
+
